@@ -1,0 +1,1265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Barriers Practice — A Sore Head</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --paper: #f5f0e6;
+    --paper-deep: #ece4d3;
+    --ink: #1a1410;
+    --ink-soft: #4a3f35;
+    --rule: #c9bca0;
+    --oxblood: #7a1a2e;
+    --oxblood-deep: #5a0f20;
+    --oxblood-soft: #a83a4f;
+    --gold: #b8860b;
+    --green: #4a6b3a;
+    --green-soft: #e8efd9;
+    --red-wrong: #8b2a1f;
+    --red-soft: #f5dcd7;
+    --blue-tag: #2c4a6b;
+    --shadow: rgba(26, 20, 16, 0.08);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Newsreader', Georgia, serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.6;
+    min-height: 100vh;
+    background-image:
+      radial-gradient(circle at 20% 30%, rgba(122, 26, 46, 0.025) 0%, transparent 40%),
+      radial-gradient(circle at 80% 70%, rgba(184, 134, 11, 0.03) 0%, transparent 50%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3CfeColorMatrix values='0 0 0 0 0.4 0 0 0 0 0.35 0 0 0 0 0.25 0 0 0 0.04 0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .page {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 60px 40px 100px;
+  }
+
+  /* ─── Header ─── */
+  .masthead {
+    border-bottom: 3px double var(--ink);
+    padding-bottom: 24px;
+    margin-bottom: 48px;
+    position: relative;
+  }
+
+  .masthead-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 14px;
+  }
+
+  .masthead-top .pulse {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background: var(--oxblood);
+    border-radius: 50%;
+    margin-right: 8px;
+    animation: pulse 2s ease-in-out infinite;
+    vertical-align: middle;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.85); }
+  }
+
+  h1.title {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: clamp(2.2rem, 5vw, 3.6rem);
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    margin-bottom: 8px;
+  }
+
+  h1.title em {
+    font-style: italic;
+    color: var(--oxblood);
+    font-weight: 600;
+  }
+
+  .subtitle {
+    font-family: 'Newsreader', serif;
+    font-style: italic;
+    font-size: 1.05rem;
+    color: var(--ink-soft);
+    max-width: 600px;
+  }
+
+  .masthead-meta {
+    display: flex;
+    gap: 28px;
+    margin-top: 18px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--ink-soft);
+  }
+
+  .masthead-meta span strong {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  /* ─── Instructions panel ─── */
+  .instructions {
+    background: var(--paper-deep);
+    border-left: 4px solid var(--oxblood);
+    padding: 22px 28px;
+    margin-bottom: 56px;
+    font-size: 0.98rem;
+  }
+
+  .instructions h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    letter-spacing: 0.02em;
+  }
+
+  .instructions ul {
+    list-style: none;
+    padding-left: 0;
+  }
+
+  .instructions li {
+    padding: 3px 0 3px 22px;
+    position: relative;
+    color: var(--ink-soft);
+  }
+
+  .instructions li::before {
+    content: '§';
+    position: absolute;
+    left: 0;
+    color: var(--oxblood);
+    font-weight: 600;
+  }
+
+  /* ─── Progress ─── */
+  .progress-wrap {
+    position: sticky;
+    top: 0;
+    background: var(--paper);
+    padding: 16px 0 14px;
+    z-index: 50;
+    margin-bottom: 32px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .progress-meta {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 8px;
+  }
+
+  .progress-bar {
+    height: 4px;
+    background: var(--paper-deep);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--oxblood), var(--oxblood-soft));
+    width: 0%;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* ─── Theme block ─── */
+  .theme {
+    margin-bottom: 80px;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .theme-header {
+    margin-bottom: 28px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--rule);
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .theme-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--oxblood);
+    margin-bottom: 4px;
+  }
+
+  .theme-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.9rem;
+    font-weight: 600;
+    line-height: 1.1;
+  }
+
+  .theme-count {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    background: var(--paper-deep);
+    padding: 4px 10px;
+    border-radius: 2px;
+  }
+
+  /* ─── Options grid ─── */
+  .options-card {
+    background: #fefcf6;
+    border: 1px solid var(--rule);
+    box-shadow: 0 2px 0 var(--shadow);
+    padding: 22px 26px;
+    margin-bottom: 36px;
+  }
+
+  .options-heading {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed var(--rule);
+  }
+
+  .options-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 6px 24px;
+    list-style: none;
+  }
+
+  .options-list li {
+    padding: 4px 0;
+    font-size: 1rem;
+    color: var(--ink);
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+  }
+
+  .options-list .opt-letter {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 700;
+    color: var(--oxblood);
+    font-size: 1.1rem;
+    min-width: 18px;
+  }
+
+  /* ─── Question ─── */
+  .question {
+    margin-bottom: 38px;
+  }
+
+  .vignette {
+    border-left: 3px solid var(--ink);
+    padding: 14px 22px;
+    margin-bottom: 18px;
+    background: rgba(255, 253, 247, 0.5);
+  }
+
+  .q-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--oxblood);
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  .q-text {
+    font-family: 'Newsreader', serif;
+    font-size: 1.08rem;
+    line-height: 1.65;
+    color: var(--ink);
+  }
+
+  /* ─── Answer selector ─── */
+  .answer-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    margin-left: 25px;
+  }
+
+  .answer-row .label-text {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-right: 6px;
+  }
+
+  .letter-btn {
+    width: 38px;
+    height: 38px;
+    border: 1px solid var(--rule);
+    background: #fefcf6;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--ink);
+    cursor: pointer;
+    transition: all 0.18s ease;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .letter-btn:hover:not(:disabled) {
+    border-color: var(--oxblood);
+    color: var(--oxblood);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px var(--shadow);
+  }
+
+  .letter-btn.selected {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+  }
+
+  .letter-btn.correct {
+    background: var(--green);
+    color: white;
+    border-color: var(--green);
+  }
+
+  .letter-btn.wrong {
+    background: var(--red-wrong);
+    color: white;
+    border-color: var(--red-wrong);
+  }
+
+  .letter-btn:disabled {
+    cursor: default;
+  }
+
+  .submit-btn {
+    margin-left: 8px;
+    padding: 8px 18px;
+    background: var(--oxblood);
+    color: var(--paper);
+    border: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    border-radius: 2px;
+    height: 38px;
+  }
+
+  .submit-btn:hover:not(:disabled) {
+    background: var(--oxblood-deep);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(122, 26, 46, 0.3);
+  }
+
+  .submit-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+
+  .hint-btn {
+    background: transparent;
+    color: var(--ink-soft);
+    border: 1px solid var(--rule);
+    padding: 8px 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 2px;
+    height: 38px;
+    transition: all 0.18s ease;
+  }
+
+  .hint-btn:hover:not(:disabled) {
+    color: var(--gold);
+    border-color: var(--gold);
+  }
+
+  .hint-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  /* ─── Hint panel ─── */
+  .hint-panel {
+    margin: 14px 0 0 25px;
+    padding: 12px 18px;
+    background: rgba(184, 134, 11, 0.08);
+    border-left: 3px solid var(--gold);
+    font-style: italic;
+    font-size: 0.98rem;
+    color: var(--ink-soft);
+    animation: fadeIn 0.3s ease;
+  }
+
+  .hint-panel::before {
+    content: '※ Hint — ';
+    font-family: 'JetBrains Mono', monospace;
+    font-style: normal;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 600;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─── Explanation panel ─── */
+  .explanation {
+    margin: 18px 0 0 25px;
+    padding: 22px 26px;
+    background: #fefcf6;
+    border: 1px solid var(--rule);
+    border-left: 4px solid var(--oxblood);
+    animation: fadeIn 0.4s ease;
+    box-shadow: 0 2px 0 var(--shadow);
+  }
+
+  .verdict {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .verdict.correct { color: var(--green); }
+  .verdict.incorrect { color: var(--red-wrong); }
+
+  .verdict .icon {
+    font-size: 1.6rem;
+    line-height: 1;
+  }
+
+  .exp-section {
+    margin-bottom: 14px;
+  }
+
+  .exp-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--oxblood);
+    font-weight: 600;
+    margin-bottom: 5px;
+    display: block;
+  }
+
+  .exp-text {
+    font-size: 1rem;
+    line-height: 1.65;
+    color: var(--ink);
+  }
+
+  .exp-text strong {
+    color: var(--oxblood-deep);
+    font-weight: 600;
+  }
+
+  .distractors {
+    margin-top: 8px;
+    padding-left: 18px;
+  }
+
+  .distractors li {
+    margin-bottom: 8px;
+    list-style: none;
+    position: relative;
+    font-size: 0.96rem;
+    line-height: 1.55;
+    color: var(--ink-soft);
+  }
+
+  .distractors li::before {
+    content: '✗';
+    position: absolute;
+    left: -18px;
+    color: var(--red-wrong);
+    font-weight: 600;
+  }
+
+  .distractors li strong {
+    color: var(--ink);
+  }
+
+  .key-point {
+    margin-top: 14px;
+    padding: 12px 16px;
+    background: var(--green-soft);
+    border-left: 3px solid var(--green);
+    font-style: italic;
+    font-size: 0.98rem;
+    color: var(--ink);
+  }
+
+  .key-point::before {
+    content: '◆ Key Point — ';
+    font-family: 'JetBrains Mono', monospace;
+    font-style: normal;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--green);
+    font-weight: 600;
+  }
+
+  .reference {
+    margin-top: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+  }
+
+  /* ─── Final results ─── */
+  .results {
+    margin-top: 60px;
+    padding: 40px;
+    background: linear-gradient(180deg, #fefcf6 0%, var(--paper-deep) 100%);
+    border: 1px solid var(--rule);
+    text-align: center;
+    box-shadow: 0 4px 0 var(--shadow);
+    animation: fadeUp 0.6s ease;
+    display: none;
+  }
+
+  .results.visible { display: block; }
+
+  .results-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 12px;
+  }
+
+  .score-display {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 4.5rem;
+    font-weight: 500;
+    line-height: 1;
+    color: var(--oxblood);
+    margin-bottom: 6px;
+  }
+
+  .score-display .out-of {
+    font-size: 2rem;
+    color: var(--ink-soft);
+  }
+
+  .grade-band {
+    font-family: 'Newsreader', serif;
+    font-style: italic;
+    font-size: 1.2rem;
+    color: var(--ink);
+    margin-bottom: 28px;
+  }
+
+  .results-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .results-actions button {
+    padding: 12px 22px;
+    border: 1px solid var(--ink);
+    background: transparent;
+    color: var(--ink);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-radius: 2px;
+  }
+
+  .results-actions button:hover {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .results-actions button.primary {
+    background: var(--oxblood);
+    color: var(--paper);
+    border-color: var(--oxblood);
+  }
+
+  .results-actions button.primary:hover {
+    background: var(--oxblood-deep);
+    border-color: var(--oxblood-deep);
+  }
+
+  /* ─── Topic breakdown ─── */
+  .topic-breakdown {
+    margin-top: 32px;
+    text-align: left;
+    padding: 20px 24px;
+    background: rgba(255, 253, 247, 0.6);
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .topic-breakdown h4 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    margin-bottom: 14px;
+    font-weight: 600;
+  }
+
+  .topic-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    font-size: 0.95rem;
+    border-bottom: 1px dashed var(--rule);
+  }
+
+  .topic-row:last-child { border-bottom: none; }
+
+  .topic-row .topic-name { color: var(--ink); }
+
+  .topic-row .topic-score {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+  }
+
+  .topic-row .topic-score.full { color: var(--green); font-weight: 600; }
+  .topic-row .topic-score.partial { color: var(--gold); font-weight: 600; }
+  .topic-row .topic-score.zero { color: var(--red-wrong); font-weight: 600; }
+
+  /* ─── Footer ─── */
+  footer {
+    text-align: center;
+    margin-top: 60px;
+    padding-top: 24px;
+    border-top: 1px solid var(--rule);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
+  footer .ornament {
+    color: var(--oxblood);
+    margin: 0 8px;
+  }
+
+  /* ─── Print styles ─── */
+  @media print {
+    body { background: white; }
+    .progress-wrap, .answer-row button, .submit-btn, .hint-btn, .results-actions { display: none !important; }
+    .explanation { display: block !important; }
+    .theme { page-break-inside: avoid; }
+  }
+
+  /* ─── Mobile ─── */
+  @media (max-width: 600px) {
+    .page { padding: 32px 20px 60px; }
+    .options-list { grid-template-columns: 1fr; }
+    .answer-row { margin-left: 0; }
+    .vignette { padding: 12px 16px; }
+    .explanation { margin-left: 0; padding: 18px 18px; }
+    .hint-panel { margin-left: 0; }
+    h1.title { font-size: 2rem; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ─── Masthead ─── -->
+  <header class="masthead">
+    <div class="masthead-top">
+      <span><span class="pulse"></span>MEDI924 · Barriers Practice Series</span>
+      <span>Vol. I · No. 1</span>
+    </div>
+    <h1 class="title">A Sore <em>Head</em></h1>
+    <p class="subtitle">Extended matching questions on cranial anatomy, neuroembryology, meningeal pathology &amp; the febrile child with headache.</p>
+    <div class="masthead-meta">
+      <span>Format · <strong>10 EMQs</strong></span>
+      <span>Time · <strong>15 min</strong></span>
+      <span>Lecture · <strong>Anat Path</strong></span>
+      <span>Source · <strong>Macquarie University</strong></span>
+    </div>
+  </header>
+
+  <!-- ─── Instructions ─── -->
+  <section class="instructions">
+    <h3>Instructions</h3>
+    <ul>
+      <li>Each theme presents a list of 8–10 alphabetically ordered options.</li>
+      <li>For each clinical scenario, select the <em>single best</em> option from the list above it.</li>
+      <li>Use the <strong>Hint</strong> button if stuck — but it halves that question's mark.</li>
+      <li>Submit each answer to lock it in and reveal the explanation.</li>
+      <li>An option may be used <em>once, more than once, or not at all</em> within a theme.</li>
+    </ul>
+  </section>
+
+  <!-- ─── Progress bar ─── -->
+  <div class="progress-wrap">
+    <div class="progress-meta">
+      <span id="progress-label">Question 0 of 10 answered</span>
+      <span id="progress-score">Score: 0 / 0</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+  </div>
+
+  <!-- ─── Exam content ─── -->
+  <main id="exam"></main>
+
+  <!-- ─── Final results ─── -->
+  <section class="results" id="results">
+    <div class="results-label">Final Mark</div>
+    <div class="score-display"><span id="final-score">0</span><span class="out-of">/10</span></div>
+    <div class="grade-band" id="grade-band"></div>
+    <div class="topic-breakdown" id="topic-breakdown"></div>
+    <div class="results-actions">
+      <button class="primary" onclick="location.reload()">↻ Retake exam</button>
+      <button onclick="window.print()">⎙ Print results</button>
+      <button onclick="document.getElementById('exam').scrollIntoView({behavior:'smooth'})">↑ Review answers</button>
+    </div>
+  </section>
+
+  <footer>
+    <span class="ornament">❦</span>
+    Crafted for Macquarie MD Year 2 · MEDI924
+    <span class="ornament">❦</span>
+  </footer>
+
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════════
+   QUESTION BANK — A Sore Head
+   ═══════════════════════════════════════════════════════════════════════ */
+
+const examData = [
+  /* ─────── THEME 1 ─────── */
+  {
+    themeLabel: "Theme One",
+    themeTitle: "Causes of Headache in a Febrile Child",
+    options: [
+      "Acute bacterial meningitis",
+      "Cerebral abscess",
+      "Cryptococcal meningitis",
+      "Hydrocephalus secondary to aqueductal stenosis",
+      "Mastoiditis with intracranial extension",
+      "Migraine with aura",
+      "Subarachnoid haemorrhage",
+      "Tuberculous meningitis",
+      "Viral encephalitis",
+      "Viral meningitis"
+    ],
+    questions: [
+      {
+        id: 1,
+        topic: "CSF interpretation",
+        scenario: "A 7-year-old previously well girl is brought in with a 6-hour history of severe headache, photophobia and one episode of vomiting. She is febrile (39.2°C), tachycardic and has a non-blanching rash on her limbs. Her neck is stiff. CSF analysis returns: neutrophils >80,000/µL, lymphocytes 60/µL, protein 2.3 g/L, glucose 0.2 mmol/L.",
+        correct: "A",
+        hint: "The CSF profile here is the classic quartet — pay attention to the glucose and the cell type.",
+        why: "The combination of <strong>very high neutrophils, markedly elevated protein (>1 g/L), and very low glucose</strong> is pathognomonic for acute bacterial meningitis. The non-blanching rash signals associated meningococcal septicaemia (vasculitis). Neisseria meningitidis is among the most common organisms in this age group.",
+        distractors: [
+          { letter: "J", text: "<strong>Viral meningitis</strong> would show a lymphocyte-predominant CSF, normal glucose and normal-to-mildly elevated protein — opposite to this picture." },
+          { letter: "H", text: "<strong>Tuberculous meningitis</strong> causes chronic granulomatous meningitis with lymphocyte predominance and a more insidious onset over weeks; the acute febrile presentation here doesn't fit." },
+          { letter: "I", text: "<strong>Viral encephalitis</strong> typically presents with altered mental status, focal deficits or seizures rather than pure meningism, and CSF would show lymphocytes." }
+        ],
+        keyPoint: "Bacterial meningitis CSF: ↑↑ neutrophils, ↑ protein, ↓ glucose. Viral meningitis: ↑ lymphocytes, normal protein, normal glucose.",
+        ref: "Slides 52–54 · CSF Analysis & Interpretation"
+      },
+      {
+        id: 2,
+        topic: "Paediatric headache differential",
+        scenario: "A 12-year-old boy presents with a 3-week history of progressively worsening early-morning headaches, projectile vomiting on waking without preceding nausea, and his parents have noticed his head circumference appears enlarged. Fundoscopy reveals papilloedema. He has no fever and no neck stiffness.",
+        correct: "D",
+        hint: "Subacute progression, no fever, morning vomiting and papilloedema all point to a slowly evolving mass-or-flow problem.",
+        why: "<strong>Hydrocephalus from aqueductal stenosis</strong> obstructs CSF flow between the third and fourth ventricles, causing chronically raised ICP. The classic features here are early-morning headache (lying flat increases ICP), projectile vomiting <em>without preceding nausea</em>, papilloedema, and gradual head enlargement (sutures still partially compliant in older children). Absence of fever excludes infection.",
+        distractors: [
+          { letter: "A", text: "<strong>Bacterial meningitis</strong> presents acutely with fever, neck stiffness and is rarely 3 weeks evolving without sepsis." },
+          { letter: "F", text: "<strong>Migraine</strong> does not cause papilloedema or progressive head enlargement — those signs mandate imaging." },
+          { letter: "G", text: "<strong>Subarachnoid haemorrhage</strong> classically causes a thunderclap headache of sudden onset, not a 3-week subacute decline." }
+        ],
+        keyPoint: "Vomiting without preceding nausea + early morning headache + papilloedema = raised ICP until proven otherwise. Image first, LP only if safe.",
+        ref: "Slides 44–46 · CSF circulation, raised ICP signs"
+      },
+      {
+        id: 3,
+        topic: "Complications of otitis media",
+        scenario: "A 5-year-old with a 10-day history of right-sided otalgia and a recent ear discharge presents with fever, headache, and tender swelling behind his right ear. His mother also notes he has become drowsy in the past 6 hours, with neck stiffness. CT shows opacification of the right mastoid air cells with bony erosion and a small adjacent extra-axial collection.",
+        correct: "E",
+        hint: "Trace the anatomy from the middle ear: where does infection naturally extend, and which bone hosts those air cells?",
+        why: "<strong>Mastoiditis with intracranial extension</strong> is a recognised complication of untreated acute otitis media. The mastoid process of the temporal bone communicates with the middle ear via the mastoid antrum; spread can lead to meningitis, cerebral abscess or venous sinus thrombosis. The post-auricular tenderness, mastoid opacification and adjacent extra-axial collection are diagnostic.",
+        distractors: [
+          { letter: "B", text: "<strong>Cerebral abscess</strong> is a possible <em>downstream</em> complication, but the primary lesion here is the mastoiditis driving the picture; without the ear/mastoid findings the answer would be different." },
+          { letter: "A", text: "<strong>Acute bacterial meningitis</strong> is also a possible secondary complication, but the imaging shows a focal mastoid process, not isolated meningeal inflammation." },
+          { letter: "I", text: "<strong>Viral encephalitis</strong> would not show mastoid opacification or bony erosion." }
+        ],
+        keyPoint: "Mastoiditis can spread intracranially via the petrous temporal bone — meningitis, abscess and sigmoid sinus thrombosis are the feared sequelae.",
+        ref: "Slide 18 · Mastoid process & complications"
+      },
+      {
+        id: 4,
+        topic: "Chronic meningitis",
+        scenario: "A 16-year-old refugee from Afghanistan, recently arrived in Australia, presents with a 6-week history of low-grade fevers, night sweats, weight loss and progressively worsening headache. She has new-onset confusion and a left-sided cranial nerve VI palsy. CSF shows 350 lymphocytes/µL, protein 1.8 g/L, glucose 1.4 mmol/L (serum 5.2). Chest X-ray shows apical fibronodular changes.",
+        correct: "H",
+        hint: "Lymphocytic CSF + low glucose + chronic course + travel/origin from a high-prevalence region. The CXR is the giveaway.",
+        why: "<strong>Tuberculous meningitis</strong> classically presents subacutely or chronically with lymphocytic pleocytosis, <em>low</em> glucose (atypical for viral), elevated protein, and basal meningeal involvement causing cranial nerve palsies (especially CN VI). Apical fibronodular CXR changes suggest pulmonary TB. The lecture explicitly warns: <em>'Never forget about TB (travel history) — will cause granulomatous chronic meningitis.'</em>",
+        distractors: [
+          { letter: "J", text: "<strong>Viral meningitis</strong> shows normal glucose; the low glucose here excludes it." },
+          { letter: "C", text: "<strong>Cryptococcal meningitis</strong> also gives lymphocytic CSF with low glucose, but typically occurs in immunocompromised hosts (HIV, transplant) — there's no such history here, and the apical CXR changes specifically suggest TB." },
+          { letter: "A", text: "<strong>Acute bacterial meningitis</strong> has a neutrophilic CSF and acute (hours-to-days) onset, not 6 weeks." }
+        ],
+        keyPoint: "Lymphocytes + LOW glucose in CSF = think TB or fungal meningitis. Always take a travel history.",
+        ref: "Slide 57 · TB meningitis · granulomatous chronic"
+      }
+    ]
+  },
+
+  /* ─────── THEME 2 ─────── */
+  {
+    themeLabel: "Theme Two",
+    themeTitle: "Cranial & Vertebral Anatomy",
+    options: [
+      "Anterior fontanelle",
+      "Asterion",
+      "Cisterna magna",
+      "Crista galli",
+      "Foramen of Monro",
+      "Lambdoid suture",
+      "Mastoid process",
+      "Pterion",
+      "Sella turcica",
+      "Vertex"
+    ],
+    questions: [
+      {
+        id: 5,
+        topic: "Skull surface anatomy",
+        scenario: "A 24-year-old man is struck on the side of the head with a baseball bat just above and anterior to the ear. He briefly loses consciousness, then has a lucid interval of 90 minutes before deteriorating. CT shows a biconvex (lentiform) extra-axial collection and an underlying skull fracture at the H-shaped junction of four cranial bones.",
+        correct: "H",
+        hint: "Four bones meet here: frontal, parietal, temporal, sphenoid. It's the thinnest point of the skull and the artery beneath is famously vulnerable.",
+        why: "The <strong>pterion</strong> is the H-shaped junction of frontal, parietal, temporal and the greater wing of sphenoid — the thinnest part of the lateral skull vault. The middle meningeal artery runs immediately deep to it; fracture causes arterial bleeding into the extradural space, producing a <strong>biconvex epidural haematoma</strong> with the classic lucid interval before deterioration.",
+        distractors: [
+          { letter: "B", text: "<strong>Asterion</strong> is the meeting point of parietal, temporal and occipital bones — posterolateral skull, not associated with the MMA." },
+          { letter: "G", text: "<strong>Mastoid process</strong> is a bony prominence behind the ear, not a suture junction." },
+          { letter: "F", text: "<strong>Lambdoid suture</strong> is between parietal and occipital bones — not the four-way junction described." }
+        ],
+        keyPoint: "Pterion fracture → middle meningeal artery rupture → epidural haematoma with lucid interval. Lentiform shape on CT.",
+        ref: "Slides 17–18 · Bony landmarks of the skull"
+      },
+      {
+        id: 6,
+        topic: "Paediatric skull development",
+        scenario: "A 14-month-old boy is brought to clinic because his mother is concerned his head looks 'pointy and narrow at the front'. On examination his forehead is triangular and there is a palpable midline ridge running from the bridge of the nose to the top of his head. Imaging confirms premature fusion of a single suture, with the rest of his cranial sutures patent.",
+        correct: null,
+        // Note: this question's correct answer letter depends on shuffled options; we encode by content
+        correctText: "Lambdoid suture",
+        // Actually for trigonocephaly the prematurely closed suture is the metopic — but metopic isn't in our list. Reframe.
+        // Re-design: make this about WHERE clinicians palpate to check ICP in an infant
+        scenarioOverride: true,
+        scenario_alt: "You are assessing a 9-month-old infant brought in with vomiting, irritability and reduced feeding over 24 hours. As part of your assessment of intracranial pressure, you wish to palpate the diamond-shaped soft area on the anterior aspect of the skull, which in this case feels tense and bulging.",
+        correct_alt: "A",
+        hint: "It's the diamond-shaped one at the bregma — the largest and last to close.",
+        why: "The <strong>anterior fontanelle</strong> is the diamond-shaped membranous gap at the junction of the frontal and parietal bones (at the bregma). It normally closes between 18–24 months and is the key clinical site for assessing intracranial pressure in infants. A <em>bulging</em> fontanelle indicates raised ICP; a <em>sunken</em> fontanelle indicates dehydration.",
+        distractors: [
+          { letter: "F", text: "<strong>Lambdoid suture</strong> is a posterior suture line, not a fontanelle, and is not used to assess ICP." },
+          { letter: "J", text: "<strong>Vertex</strong> is the highest point of the skull along the sagittal suture — a landmark, not a clinical assessment site." },
+          { letter: "B", text: "<strong>Asterion</strong> is a lateral bony landmark, again not used for ICP assessment." }
+        ],
+        keyPoint: "Bulging anterior fontanelle in an unwell infant = raised ICP until proven otherwise. It's one of your most useful paediatric signs.",
+        ref: "Slides 22, 46 · Fontanelles & paediatric ICP"
+      },
+      {
+        id: 7,
+        topic: "Cranial fossa anatomy",
+        scenario: "A 50-year-old woman undergoes MRI for headaches and visual field disturbance. The radiologist reports a 1.8 cm pituitary macroadenoma sitting within a saddle-shaped depression in the body of the sphenoid bone, with superior extension compressing the optic chiasm.",
+        correct: "I",
+        hint: "Latin for 'Turkish saddle' — describes the shape of the bony fossa in the sphenoid.",
+        why: "The <strong>sella turcica</strong> ('Turkish saddle') is the saddle-shaped depression on the superior surface of the sphenoid body that houses the pituitary fossa (hypophyseal fossa). Pituitary macroadenomas expand within this space and, when large enough, extend superiorly through the diaphragma sellae to compress the optic chiasm — producing the classic bitemporal hemianopia.",
+        distractors: [
+          { letter: "D", text: "<strong>Crista galli</strong> is the midline bony ridge of the ethmoid bone, an attachment for the falx cerebri — not the pituitary fossa." },
+          { letter: "C", text: "<strong>Cisterna magna</strong> is a CSF-filled subarachnoid cistern between the medulla and cerebellum — entirely posterior fossa, not related." },
+          { letter: "E", text: "<strong>Foramen of Monro</strong> is the interventricular foramen connecting lateral and third ventricles — not a bony landmark." }
+        ],
+        keyPoint: "Sella turcica = pituitary fossa = on the body of the sphenoid bone. Suprasellar extension hits the optic chiasm.",
+        ref: "Slide 19 · Skull CT bone view"
+      }
+    ]
+  },
+
+  /* ─────── THEME 3 ─────── */
+  {
+    themeLabel: "Theme Three",
+    themeTitle: "Embryology & Pathology of the CNS",
+    options: [
+      "Anencephaly",
+      "Bicoronal craniosynostosis",
+      "Chiari II malformation",
+      "Choroid plexus (failure of formation)",
+      "Diencephalon",
+      "Mesencephalon",
+      "Metencephalon",
+      "Myelencephalon",
+      "Neural crest cells",
+      "Spina bifida cystica with myeloschisis"
+    ],
+    questions: [
+      {
+        id: 8,
+        topic: "Embryological derivatives",
+        scenario: "A medical student is asked to identify the embryonic origin of a structure shown on a histology slide of the cerebellum and pons. Both of these structures are derived from a single secondary brain vesicle.",
+        correct: "G",
+        hint: "Five secondary vesicles arise from three primary ones. Pons + cerebellum share a vesicle whose name starts with 'meta'.",
+        why: "The <strong>metencephalon</strong> is the rostral subdivision of the rhombencephalon (hindbrain) and gives rise to both the <strong>pons and cerebellum</strong>. Its cavity becomes the upper part of the fourth ventricle. The myelencephalon (the caudal hindbrain subdivision) gives rise only to the medulla.",
+        distractors: [
+          { letter: "H", text: "<strong>Myelencephalon</strong> gives rise to the medulla oblongata only — not the pons or cerebellum." },
+          { letter: "F", text: "<strong>Mesencephalon</strong> remains the midbrain — it does not subdivide further and does not produce pons or cerebellum." },
+          { letter: "E", text: "<strong>Diencephalon</strong> gives rise to thalamus, hypothalamus and retina — derivatives of the forebrain, not hindbrain." }
+        ],
+        keyPoint: "Hindbrain (rhombencephalon) → metencephalon (pons + cerebellum) + myelencephalon (medulla). Forebrain (prosencephalon) → telencephalon (cerebrum) + diencephalon (thalamus/hypothalamus).",
+        ref: "Slides 25–26 · Brain development"
+      },
+      {
+        id: 9,
+        topic: "Neural tube defects",
+        scenario: "A neonate is delivered at term with a large open midline defect on the lower back through which the spinal cord and meninges are visibly exposed. The mother had not taken folate supplementation. Imaging confirms downward displacement of the cerebellar tonsils through the foramen magnum and obstructive hydrocephalus.",
+        correct: "J",
+        hint: "Both the spinal cord AND meninges are protruding (not just meninges) — this is the most severe end of the spina bifida spectrum.",
+        why: "<strong>Spina bifida cystica with myeloschisis (myelomeningocele)</strong> is a congenital midline defect of vertebral arch fusion with protrusion of <em>both meninges and spinal cord</em>. It carries the highest morbidity of the spina bifida spectrum and is strongly associated with Chiari II malformation and obstructive hydrocephalus. Folate deficiency in pregnancy is a major risk factor.",
+        distractors: [
+          { letter: "C", text: "<strong>Chiari II</strong> is the associated hindbrain malformation, but the question asks about the primary lesion — the open spinal defect itself." },
+          { letter: "A", text: "<strong>Anencephaly</strong> involves failure of the rostral (upper) neural tube to close, producing absence of brain/skull/scalp — this case describes a caudal (lower spinal) defect." },
+          { letter: "D", text: "<strong>Choroid plexus failure</strong> would not produce an open midline lesion on the back." }
+        ],
+        keyPoint: "Spina bifida spectrum: occulta (defect only) → meningocele (meninges only) → myelomeningocele/myeloschisis (meninges + cord). Folate prevents.",
+        ref: "Slide 28 · Spina bifida"
+      },
+      {
+        id: 10,
+        topic: "Neural crest derivatives",
+        scenario: "A pathologist examines tissue from the leptomeninges (arachnoid and pia) of the cerebrum at autopsy. She notes that this tissue, along with the adrenal medulla, melanocytes and peripheral nervous system ganglia, all share a common embryological origin.",
+        correct: "I",
+        hint: "These cells detach from the neural folds and migrate widely. Their derivatives are scattered throughout the body.",
+        why: "<strong>Neural crest cells</strong> detach from the dorsal aspect of the closing neural tube and migrate to give rise to: (i) the peripheral nervous system, (ii) skeletal structures of the head and neck, (iii) the adrenal medulla, (iv) melanocytes, and (v) the leptomeninges (arachnoid and pia mater) covering the forebrain. The dura mater and the meninges of midbrain/hindbrain/spinal cord arise instead from paraxial mesoderm.",
+        distractors: [
+          { letter: "E", text: "<strong>Diencephalon</strong> is a forebrain vesicle giving rise to thalamic structures — not adrenal medulla or melanocytes." },
+          { letter: "G", text: "<strong>Metencephalon</strong> gives rise to pons and cerebellum, not the diverse derivatives listed." },
+          { letter: "D", text: "<strong>Choroid plexus</strong> is derived from neuroepithelium and meninges in combination — and it doesn't produce the listed structures." }
+        ],
+        keyPoint: "Neural crest = the great migratory tribe. PNS, adrenal medulla, melanocytes, head/neck skeleton, leptomeninges (forebrain). MELT acronym = Melanocytes, Enteric ganglia, Leptomeninges, neural Tube derivatives... etc.",
+        ref: "Slide 24 · Neural crest cells"
+      }
+    ]
+  }
+];
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Patch question 6 (had a design issue) — replace cleanly
+   ═══════════════════════════════════════════════════════════════════════ */
+examData[1].questions[1] = {
+  id: 6,
+  topic: "Paediatric skull development",
+  scenario: "You are assessing a 9-month-old infant brought in with vomiting, irritability and reduced feeding over 24 hours. As part of your assessment of intracranial pressure, you wish to palpate the diamond-shaped soft area at the junction of the frontal and parietal bones, which in this case feels tense and bulging.",
+  correct: "A",
+  hint: "It's the diamond-shaped one at the bregma — the largest and last fontanelle to close.",
+  why: "The <strong>anterior fontanelle</strong> is the diamond-shaped membranous gap at the bregma (junction of coronal and sagittal sutures, between the frontal and parietal bones). It normally closes between 18–24 months and is the key clinical site for assessing ICP in infants. A <em>bulging</em> fontanelle indicates raised ICP; a <em>sunken</em> fontanelle indicates dehydration.",
+  distractors: [
+    { letter: "F", text: "<strong>Lambdoid suture</strong> is a posterior suture line, not a fontanelle, and is not used to assess ICP." },
+    { letter: "J", text: "<strong>Vertex</strong> is the highest point of the skull along the sagittal suture — a fixed bony landmark, not a soft compressible area." },
+    { letter: "B", text: "<strong>Asterion</strong> is a lateral bony landmark at the meeting of parietal, temporal and occipital bones — not a midline fontanelle." }
+  ],
+  keyPoint: "Bulging anterior fontanelle in an unwell infant = raised ICP until proven otherwise. One of paediatrics' most useful signs.",
+  ref: "Slides 22, 46 · Fontanelles & paediatric ICP"
+};
+
+/* ═══════════════════════════════════════════════════════════════════════
+   STATE
+   ═══════════════════════════════════════════════════════════════════════ */
+const state = {
+  totalQuestions: 0,
+  answered: 0,
+  score: 0,
+  maxScore: 0,
+  selections: {}, // qId -> letter
+  hintsUsed: {},  // qId -> bool
+  results: {}     // qId -> { correct, scoreAwarded, topic }
+};
+
+/* ═══════════════════════════════════════════════════════════════════════
+   RENDER
+   ═══════════════════════════════════════════════════════════════════════ */
+function render() {
+  const exam = document.getElementById('exam');
+  exam.innerHTML = '';
+  let qNum = 0;
+  state.totalQuestions = examData.reduce((s, t) => s + t.questions.length, 0);
+
+  examData.forEach((theme, ti) => {
+    const themeEl = document.createElement('section');
+    themeEl.className = 'theme';
+    themeEl.style.animationDelay = (ti * 0.1) + 's';
+
+    /* Theme header */
+    themeEl.innerHTML = `
+      <div class="theme-header">
+        <div>
+          <div class="theme-label">${theme.themeLabel}</div>
+          <h2 class="theme-title">${theme.themeTitle}</h2>
+        </div>
+        <span class="theme-count">${theme.questions.length} questions</span>
+      </div>
+      <div class="options-card">
+        <div class="options-heading">Options — select the single best answer</div>
+        <ol class="options-list">
+          ${theme.options.map((opt, i) => `
+            <li><span class="opt-letter">${String.fromCharCode(65+i)}.</span><span>${opt}</span></li>
+          `).join('')}
+        </ol>
+      </div>
+    `;
+
+    /* Questions */
+    theme.questions.forEach(q => {
+      qNum++;
+      const qEl = document.createElement('div');
+      qEl.className = 'question';
+      qEl.id = `q-${q.id}`;
+
+      const letterButtons = theme.options.map((_, i) => {
+        const L = String.fromCharCode(65+i);
+        return `<button class="letter-btn" data-letter="${L}" onclick="selectLetter(${q.id}, '${L}')">${L}</button>`;
+      }).join('');
+
+      qEl.innerHTML = `
+        <div class="vignette">
+          <span class="q-num">Question ${qNum} · ${q.topic}</span>
+          <p class="q-text">${q.scenario}</p>
+        </div>
+        <div class="answer-row" id="answer-row-${q.id}">
+          <span class="label-text">Answer →</span>
+          ${letterButtons}
+          <button class="hint-btn" onclick="showHint(${q.id})" id="hint-btn-${q.id}">⚐ Hint</button>
+          <button class="submit-btn" onclick="submitAnswer(${q.id})" id="submit-${q.id}" disabled>Submit</button>
+        </div>
+        <div id="hint-${q.id}"></div>
+        <div id="exp-${q.id}"></div>
+      `;
+
+      themeEl.appendChild(qEl);
+    });
+
+    exam.appendChild(themeEl);
+  });
+
+  updateProgress();
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   INTERACTIONS
+   ═══════════════════════════════════════════════════════════════════════ */
+function selectLetter(qId, letter) {
+  if (state.results[qId]) return; // already submitted, locked
+  state.selections[qId] = letter;
+  const row = document.getElementById(`answer-row-${qId}`);
+  row.querySelectorAll('.letter-btn').forEach(b => {
+    b.classList.toggle('selected', b.dataset.letter === letter);
+  });
+  document.getElementById(`submit-${qId}`).disabled = false;
+}
+
+function showHint(qId) {
+  if (state.hintsUsed[qId] || state.results[qId]) return;
+  state.hintsUsed[qId] = true;
+  const q = findQuestion(qId);
+  document.getElementById(`hint-${qId}`).innerHTML = `<div class="hint-panel">${q.hint}</div>`;
+  const btn = document.getElementById(`hint-btn-${qId}`);
+  btn.disabled = true;
+  btn.textContent = '⚐ Hint used';
+}
+
+function submitAnswer(qId) {
+  const selected = state.selections[qId];
+  if (!selected || state.results[qId]) return;
+
+  const q = findQuestion(qId);
+  const isCorrect = selected === q.correct;
+  const hintUsed = state.hintsUsed[qId];
+  const scoreAwarded = isCorrect ? (hintUsed ? 0.5 : 1) : 0;
+
+  state.results[qId] = { correct: isCorrect, scoreAwarded, topic: q.topic, hintUsed };
+  state.answered++;
+  state.score += scoreAwarded;
+  state.maxScore++;
+
+  /* Visual feedback on letter buttons */
+  const row = document.getElementById(`answer-row-${qId}`);
+  row.querySelectorAll('.letter-btn').forEach(b => {
+    b.disabled = true;
+    b.classList.remove('selected');
+    if (b.dataset.letter === q.correct) b.classList.add('correct');
+    if (b.dataset.letter === selected && !isCorrect) b.classList.add('wrong');
+  });
+  document.getElementById(`submit-${qId}`).disabled = true;
+  document.getElementById(`hint-btn-${qId}`).disabled = true;
+
+  /* Render explanation */
+  const expEl = document.getElementById(`exp-${qId}`);
+  expEl.innerHTML = `
+    <div class="explanation">
+      <div class="verdict ${isCorrect ? 'correct' : 'incorrect'}">
+        <span class="icon">${isCorrect ? '✓' : '✗'}</span>
+        ${isCorrect ? (hintUsed ? 'Correct (½ mark — hint used)' : 'Correct') : 'Incorrect'}
+        <span style="margin-left:auto; font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:0.15em; font-weight:400; color:var(--ink-soft); text-transform:uppercase;">
+          Answer: ${q.correct}
+        </span>
+      </div>
+      <div class="exp-section">
+        <span class="exp-label">Reasoning</span>
+        <p class="exp-text">${q.why}</p>
+      </div>
+      <div class="exp-section">
+        <span class="exp-label">Why not the others</span>
+        <ul class="distractors">
+          ${q.distractors.map(d => `<li><strong>${d.letter}.</strong> ${d.text}</li>`).join('')}
+        </ul>
+      </div>
+      <div class="key-point">${q.keyPoint}</div>
+      <div class="reference">↳ ${q.ref}</div>
+    </div>
+  `;
+
+  updateProgress();
+  if (state.answered === state.totalQuestions) showResults();
+}
+
+function findQuestion(qId) {
+  for (const theme of examData) {
+    const q = theme.questions.find(qq => qq.id === qId);
+    if (q) return q;
+  }
+}
+
+function updateProgress() {
+  const pct = (state.answered / state.totalQuestions) * 100;
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = `Question ${state.answered} of ${state.totalQuestions} answered`;
+  document.getElementById('progress-score').textContent = `Score: ${state.score} / ${state.maxScore}`;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   FINAL RESULTS
+   ═══════════════════════════════════════════════════════════════════════ */
+function showResults() {
+  const finalScore = state.score;
+  document.getElementById('final-score').textContent = finalScore % 1 === 0 ? finalScore : finalScore.toFixed(1);
+
+  /* Grade band */
+  const pct = (finalScore / state.totalQuestions) * 100;
+  let band = '';
+  if (pct >= 90) band = 'Outstanding — distinction-level mastery.';
+  else if (pct >= 75) band = 'Strong performance — solid grasp of the core material.';
+  else if (pct >= 60) band = 'A pass, but worth revisiting the weaker topics below.';
+  else if (pct >= 50) band = 'Borderline — focus revision on the topics flagged below.';
+  else band = 'More work needed. Re-read the lecture and retake — repetition will pay off.';
+  document.getElementById('grade-band').textContent = band;
+
+  /* Topic breakdown */
+  const topics = {};
+  Object.values(state.results).forEach(r => {
+    if (!topics[r.topic]) topics[r.topic] = { total: 0, correct: 0 };
+    topics[r.topic].total++;
+    if (r.correct) topics[r.topic].correct++;
+  });
+
+  let breakdownHTML = '<h4>Performance by topic</h4>';
+  Object.entries(topics).forEach(([topic, stats]) => {
+    const ratio = stats.correct / stats.total;
+    const cls = ratio === 1 ? 'full' : ratio > 0 ? 'partial' : 'zero';
+    breakdownHTML += `
+      <div class="topic-row">
+        <span class="topic-name">${topic}</span>
+        <span class="topic-score ${cls}">${stats.correct} / ${stats.total}</span>
+      </div>
+    `;
+  });
+  document.getElementById('topic-breakdown').innerHTML = breakdownHTML;
+
+  document.getElementById('results').classList.add('visible');
+  setTimeout(() => {
+    document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 400);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   INIT
+   ═══════════════════════════════════════════════════════════════════════ */
+render();
+</script>
+</body>
+</html>
