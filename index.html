@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MD2 Anat Path Quiz — Pancreas 1</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  body { font-family: 'Inter', system-ui, sans-serif; }
+  .font-serif { font-family: 'Lora', Georgia, serif; }
+  .fade-in { animation: fade .25s ease; }
+  @keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+  input[type=range] { accent-color: #9f1239; }
+  .hot-circle { transition: fill .15s; cursor: pointer; }
+</style>
+</head>
+<body class="bg-stone-50 text-stone-900">
+<div id="app"></div>
+
+<script>
+/* ================================================================ *
+ *  QUESTION BANK — MD2 Anat Path Case 6 (Pancreas 1)               *
+ *  Source: Macquarie University, Dr Strkalj & A/Prof Turchini       *
+ * ================================================================ */
+const QUESTIONS = [
+  {
+    id:"q01", session:"Case 6 — Upper GI / Pancreas 1",
+    topic:"Abdominal surface anatomy", bloomsLevel:"Remember", type:"MCQ",
+    stem:"At which vertebral level does the transpyloric plane of Addison lie?",
+    options:["T10","T12","L1","L3","L5"], correctAnswer:2,
+    explanation:"The transpyloric plane lies at the level of L1, halfway between the suprasternal (jugular) notch and the upper border of the pubic symphysis. It is one of the most clinically useful transverse planes of the abdomen.",
+    clinicalCorrelation:"A wide range of upper-abdominal structures sit on this plane (pylorus, pancreatic neck, gallbladder fundus, origin of SMA, hila of kidneys), making it a key surface landmark when localising upper-GI pathology.",
+    sourceCitation:"Slide 10 — Transverse abdominal planes (X = transpyloric)."
+  },
+  {
+    id:"q02", session:"Case 6 — Upper GI / Pancreas 1",
+    topic:"Abdominal surface anatomy", bloomsLevel:"Understand", type:"MCQ",
+    stem:"Which of the following structures does NOT lie at the transpyloric plane?",
+    options:["Fundus of the gallbladder","Neck of the pancreas","Origin of the superior mesenteric artery","Hila of the kidneys (approximately)","Bifurcation of the abdominal aorta"],
+    correctAnswer:4,
+    explanation:"The abdominal aorta bifurcates at L4 (approximately at the level of the umbilicus / supracristal plane), well below the transpyloric plane (L1). The other four structures all sit at or very near L1.",
+    clinicalCorrelation:"Knowing aortic bifurcation is at L4 matters for AAA palpation and for choosing the correct level when interpreting axial cross-sectional imaging.",
+    sourceCitation:"Slide 10 — Transverse abdominal planes."
+  },
+  {
+    id:"q03", session:"Case 6 — Upper GI / Pancreas 1",
+    topic:"Anterior abdominal wall", bloomsLevel:"Understand", type:"MCQ",
+    stem:"Below the arcuate line, the rectus abdominis muscle lies in direct contact posteriorly with which structure?",
+    options:["Posterior lamina of the internal oblique aponeurosis","Aponeurosis of transversus abdominis","Transversalis fascia","Linea alba","Parietal peritoneum directly, with no fascia"],
+    correctAnswer:2,
+    explanation:"Below the arcuate line, all three flat-muscle aponeuroses (external oblique, internal oblique, transversus abdominis) pass anterior to rectus abdominis. The posterior surface of the muscle is therefore in direct contact with transversalis fascia (and behind that, extraperitoneal fat and parietal peritoneum).",
+    clinicalCorrelation:"This rearrangement explains why lower-midline incisions and direct/indirect inguinal hernias relate to a thinned posterior rectus sheath — relevant for incisional planning and hernia repair.",
+    sourceCitation:"Slides 9 & 35 — Arcuate line and layers of anterior abdominal wall."
+  },
+  {
+    id:"q04", session:"Case 6 — Upper GI / Pancreas 1",
+    topic:"Anterior abdominal wall", bloomsLevel:"Remember", type:"ShortAnswer",
+    stem:"List the three flat muscles of the anterolateral abdominal wall, from superficial to deep.",
+    blanks:3, correctAnswer:["external oblique","internal oblique","transversus abdominis"],
+    acceptableVariants:[
+      ["external oblique","ext oblique","eo"],
+      ["internal oblique","int oblique","io"],
+      ["transversus abdominis","transverse abdominis","ta"]
+    ],
+    explanation:"From superficial to deep: external oblique → internal oblique → transversus abdominis. Together with rectus abdominis (vertical) they form the muscular component of the anterolateral abdominal wall.",
+    clinicalCorrelation:"Knowing this ordering is essential when describing surgical layers being divided in a laparotomy.",
+    sourceCitation:"Slide 35 — Layers of the anterior abdominal wall."
+  },
+  {
+    id:"q05", session:"Case 6 — Upper GI / Pancreas 1",
+    topic:"Peritoneum", bloomsLevel:"Apply", type:"MCQ",
+    stem:"A 24-year-old presents with central, vague periumbilical pain that several hours later becomes sharp and well localised to the right iliac fossa. Which mechanism best explains this transition?",
+    options:["The appendix has migrated anatomically into the right iliac fossa","Inflammation has progressed from visceral peritoneum (autonomic, poorly localised) to parietal peritoneum (somatic, well localised)","Vagal afferents become saturated and pain is taken over by the splanchnic chain","Bowel ischaemia has supervened, causing ischaemic somatic pain","Referred pain from T10 dermatome has shifted to L1"],
+    correctAnswer:1,
+    explanation:"Visceral peritoneum is innervated by autonomic afferents that travel with sympathetic fibres back to the spinal cord at the embryological level of the organ — so foregut/midgut/hindgut visceral pain is felt as poorly localised midline pain. When inflammation reaches the parietal peritoneum, it engages somatic afferents (segmental spinal nerves), producing well-localised, sharp pain over the inflamed area.",
+    clinicalCorrelation:"This 'shifting pain' pattern (umbilicus → RIF) is a classic teaching point in appendicitis and reflects general peritoneal innervation principles applied throughout the abdomen.",
+    sourceCitation:"Slide 40 — Innervation of peritoneum (parietal vs visceral); LO 2."
+  },
+  {
+    id:"q06", session:"Case 6 — Upper GI / Pancreas 1",
+    topic:"Peritoneum", bloomsLevel:"Remember", type:"MCQ",
+    stem:"Through which structure does a clinician's finger pass when entering the lesser sac (omental bursa) via the omental foramen of Winslow?",
+    options:["Gastrosplenic ligament","Free edge of the lesser omentum (containing the portal triad)","Falciform ligament","Splenorenal ligament","Phrenicocolic ligament"],
+    correctAnswer:1,
+    explanation:"The omental (epiploic) foramen lies posterior to the free edge of the lesser omentum (the hepatoduodenal ligament), which contains the portal triad — common bile duct (anterolateral right), hepatic artery proper (anterolateral left), and portal vein (posterior).",
+    clinicalCorrelation:"The Pringle manoeuvre — compressing the hepatoduodenal ligament between finger and thumb through the foramen — temporarily controls hepatic inflow during liver surgery.",
+    sourceCitation:"Slide 43 — Lesser sac & omental foramen anatomy."
+  },
+  {
+    id:"q07", session:"Case 6 — Upper GI / Pancreas 1",
+    topic:"Foregut embryology", bloomsLevel:"Remember", type:"ShortAnswer",
+    stem:"The uncinate process and a portion of the head of the pancreas develop from the ______ pancreatic bud.",
+    blanks:1, correctAnswer:["ventral"], acceptableVariants:[["ventral","ventral bud"]],
+    explanation:"The pancreas develops from two endodermal buds. The smaller ventral bud forms the uncinate process and part of the head; the larger dorsal bud forms the rest of the head, body and tail. The two buds fuse during gut rotation.",
+    clinicalCorrelation:"Failure of normal rotation leads to annular pancreas (ventral bud encircles the duodenum), a cause of duodenal obstruction in neonates.",
+    sourceCitation:"Slide 48 — Development of pancreas."
+  },
+  {
+    id:"q08", session:"Case 6 — Upper GI / Pancreas 1",
+    topic:"Foregut embryology", bloomsLevel:"Understand", type:"MCQ",
+    stem:"During development of the stomach, a 90° clockwise rotation (viewed from above) produces which of the following anatomical consequences?",
+    options:["The greater curvature comes to face the right side of the body","The lesser curvature comes to face the left side of the body","The greater curvature comes to face the left, and the left vagus nerve becomes anterior","The pylorus rotates to lie at the level of L4","The dorsal mesentery becomes the falciform ligament"],
+    correctAnswer:2,
+    explanation:"Clockwise rotation (viewed from above / cranially) carries the dorsally-growing greater curvature to the LEFT and the lesser curvature to the right. The left vagus nerve consequently comes to lie ANTERIOR (and the right vagus posterior) on the abdominal oesophagus — a key surgical and anatomical point.",
+    clinicalCorrelation:"Mnemonic: 'LARP' — Left vagus = Anterior, Right vagus = Posterior, after gastric rotation.",
+    sourceCitation:"Slide 44 — Development of stomach."
+  },
+  {
+    id:"q09", session:"Case 6 — Upper GI / Pancreas 1",
+    topic:"Pancreas — anatomy", bloomsLevel:"Remember", type:"MCQ",
+    stem:"The head of the pancreas is supplied predominantly by branches arising from which two parent arteries?",
+    options:["Splenic artery and left gastric artery","Gastroduodenal artery (from common hepatic) and superior mesenteric artery","Coeliac trunk directly and inferior mesenteric artery","Right and left gastroepiploic arteries","Right gastric artery and middle colic artery"],
+    correctAnswer:1,
+    explanation:"The pancreaticoduodenal arcade supplies the head: the anterior and posterior SUPERIOR pancreaticoduodenal arteries arise from the gastroduodenal artery (a branch of the common hepatic, off the coeliac trunk), while the anterior and posterior INFERIOR pancreaticoduodenal arteries arise from the SMA. The body and tail are supplied by branches of the splenic artery.",
+    clinicalCorrelation:"This shared blood supply with the duodenum is why a pancreaticoduodenectomy (Whipple) must remove both organs en bloc — they cannot be separated without devascularising the duodenum.",
+    sourceCitation:"Slide 50 — Blood supply of the pancreas."
+  },
+  {
+    id:"q10", session:"Case 6 — Upper GI / Pancreas 1",
+    topic:"Pancreas — anatomy", bloomsLevel:"Apply", type:"MCQ",
+    stem:"On axial CT, the body of the pancreas typically lies anterior to which large vein, which is therefore the principal posterior relation to remember?",
+    options:["Inferior vena cava","Splenic vein","Left renal vein","Hepatic vein","Superior mesenteric vein"],
+    correctAnswer:1,
+    explanation:"The splenic vein runs along the posterior surface of the body and tail of the pancreas, joining the SMV behind the pancreatic neck to form the portal vein. It is the principal posterior venous relation of the pancreatic body.",
+    clinicalCorrelation:"Splenic vein thrombosis is a classic complication of pancreatic disease (pancreatitis, pancreatic cancer) and can produce isolated 'sinistral' (left-sided) portal hypertension with gastric varices in the absence of liver disease.",
+    sourceCitation:"Slide 50 — Blood supply & posterior relationships of the pancreas."
+  },
+  {
+    id:"q11", session:"Case 6 — Upper GI / Pancreas 1",
+    topic:"Pancreatic histology", bloomsLevel:"Remember", type:"ShortAnswer",
+    stem:"Name the two main functional cell populations of the pancreas: one exocrine and one endocrine.",
+    blanks:2, correctAnswer:["acinar cells","islet cells"],
+    acceptableVariants:[
+      ["acinar cells","acinar","pancreatic acini","acinus"],
+      ["islet cells","islets of langerhans","islet of langerhans","islets","endocrine islet cells"]
+    ],
+    explanation:"Exocrine pancreas is composed of acinar cells (serous, secrete digestive zymogens into ducts). Endocrine pancreas consists of the islets of Langerhans, scattered through the gland, which contain α (glucagon), β (insulin), δ (somatostatin) and PP cells.",
+    clinicalCorrelation:"Pancreatic ductal adenocarcinoma arises from the duct epithelium (not acini); functional neuroendocrine tumours arise from islet cells (insulinoma, glucagonoma, etc.).",
+    sourceCitation:"Slides 27–30 — Pancreatic histology (acini, ducts, islets)."
+  },
+  {
+    id:"q12", session:"Case 6 — Upper GI / Pancreas 1",
+    topic:"Case vignette — DH (pancreatic adenocarcinoma)", bloomsLevel:"Apply", type:"MCQ",
+    caseLabel:"DH case (1/4)",
+    stem:"DH is a 56-year-old man presenting with sudden-onset epigastric pain radiating to the back, on a background of weeks of dull epigastric ache, 8 kg weight loss over 6 months, intensely itchy skin and lethargy. Examination shows scleral icterus, palmar erythema, ascites with an umbilical hernia, hepatomegaly and epigastric tenderness. Which single feature most strongly suggests an obstructive (post-hepatic) rather than a hepatocellular cause for his jaundice?",
+    options:["Palmar erythema","Hepatomegaly","Intensely pruritic skin without rash","Ascites","Lethargy"],
+    correctAnswer:2,
+    explanation:"Pruritus without rash is characteristic of cholestasis: bile salts (which accumulate when biliary outflow is obstructed) deposit in the skin and stimulate itch. Palmar erythema, ascites and lethargy are non-specific features of chronic liver disease or systemic illness; hepatomegaly here is more likely metastatic infiltration than the cause of his jaundice.",
+    clinicalCorrelation:"Painless cholestatic jaundice + weight loss in a middle-aged patient is a red-flag pattern (Courvoisier's law: a palpable, non-tender gallbladder in jaundice is unlikely to be due to gallstones — think pancreatic head malignancy).",
+    sourceCitation:"Slides 4–7 — DH history & examination findings."
+  },
+  {
+    id:"q13", session:"Case 6 — Upper GI / Pancreas 1",
+    topic:"Case vignette — DH (pancreatic adenocarcinoma)", bloomsLevel:"Analyse", type:"MCQ",
+    caseLabel:"DH case (2/4)",
+    stem:"DH's blood tests show: WCC raised, normal EUC, GGT and LDH high, normal coagulation, lipase and amylase both high, and CEA and CA 19-9 both elevated. Which of these results best supports a diagnosis of MALIGNANT (rather than purely inflammatory) pancreatic disease?",
+    options:["Raised WCC","Elevated lipase and amylase","Elevated GGT","Markedly elevated CA 19-9","Normal coagulation profile"],
+    correctAnswer:3,
+    explanation:"CA 19-9 is the tumour marker most associated with pancreaticobiliary malignancy and, in the right clinical context, supports a diagnosis of pancreatic adenocarcinoma. Lipase/amylase rise in pancreatitis but can also rise with any pancreatic injury (including obstruction by a tumour); GGT reflects biliary obstruction (which can be benign or malignant); WCC reflects inflammation.",
+    clinicalCorrelation:"CA 19-9 lacks specificity (also rises in cholangiocarcinoma, gastric and colorectal cancer, and benign cholestasis) and is undetectable in Lewis-antigen-negative individuals (~5–10%), so it is used to support — not make — the diagnosis, and to monitor disease.",
+    sourceCitation:"Slide 15 — Bloods."
+  },
+  {
+    id:"q14", session:"Case 6 — Upper GI / Pancreas 1",
+    topic:"Imaging — pancreas", bloomsLevel:"Apply", type:"MCQ",
+    caseLabel:"DH case (3/4)",
+    stem:"DH's contrast-enhanced CT abdomen demonstrates a 40 mm mass in the head of the pancreas with a 'double duct sign'. What does the double duct sign refer to?",
+    options:["Dilation of the cystic duct and the common bile duct","Simultaneous dilation of the common bile duct and the main pancreatic duct","Two parallel collateral vessels in the porta hepatis","A double-barrel appearance of the duodenum","Two distinct parenchymal duct systems from failed pancreatic-bud fusion"],
+    correctAnswer:1,
+    explanation:"The double duct sign = simultaneous dilation of both the common bile duct AND the main pancreatic duct, classically caused by an obstructing mass at the pancreatic head/uncinate or at the ampulla of Vater. It is highly suspicious for malignancy.",
+    clinicalCorrelation:"Differential of double duct sign: pancreatic head adenocarcinoma (commonest), ampullary carcinoma, distal cholangiocarcinoma, chronic pancreatitis with stricture. A focal mass with double duct sign in this patient is pancreatic adenocarcinoma until proven otherwise.",
+    sourceCitation:"Slide 23 — CT abdomen: 40 mm head of pancreas mass with double duct sign."
+  },
+  {
+    id:"q15", session:"Case 6 — Upper GI / Pancreas 1",
+    topic:"Pancreas — pathology & prognosis", bloomsLevel:"Evaluate", type:"MCQ",
+    caseLabel:"DH case (4/4)",
+    stem:"Pathology from DH's resection specimen returns: pancreatic ductal adenocarcinoma involving the portal vein bed, with perineural and lymphovascular invasion, 13 of 32 nodes positive, and metastatic carcinoma identified in the umbilical hernia sac. Which is the most appropriate next step in management?",
+    options:["Repeat curative-intent surgical resection (completion pancreatectomy)","Adjuvant FOLFIRINOX with curative intent","Multidisciplinary team discussion focused on systemic therapy and best supportive / palliative care","Whole-abdomen radiotherapy","Watchful waiting with three-monthly CA 19-9 surveillance"],
+    correctAnswer:2,
+    explanation:"Distant peritoneal metastasis (carcinoma in the umbilical hernia sac) and 13/32 positive nodes confirm Stage IV disease. There is no curative role for further surgery or radiotherapy. Management focuses on systemic chemotherapy (e.g. FOLFIRINOX or gemcitabine-based, performance-status-dependent) within a palliative framework, alongside symptom control. This decision is best taken in MDT.",
+    clinicalCorrelation:"Overall pancreatic adenocarcinoma 5-year survival is approximately 7%. Resection is only possible in the ~15–20% of patients who present with localised disease; once metastatic, median survival is months.",
+    sourceCitation:"Slides 65–67 — Diagnosis, treatment options & outcomes."
+  },
+  {
+    id:"q16", session:"Case 6 — Upper GI / Pancreas 1",
+    topic:"Differential of pancreatic mass", bloomsLevel:"Analyse", type:"EMQ",
+    stem:"Pancreatic mass — differential diagnosis. Match each vignette to the single best option.",
+    emqOptions:["A. Pancreatic ductal adenocarcinoma","B. Intraductal papillary mucinous neoplasm (IPMN)","C. Mucinous cystic neoplasm","D. Pancreatic neuroendocrine tumour (insulinoma)","E. Solid pseudopapillary neoplasm","F. Acinar cell carcinoma","G. Pancreatic lymphoma","H. Chronic pancreatitis with obstructing stone"],
+    emqStems:[
+      {vignette:"A 32-year-old woman is found to have a well-circumscribed, 5 cm partly cystic mass in the body of the pancreas on CT performed for unrelated trauma. Histology shows pseudopapillae of monomorphic cells with eosinophilic cytoplasm; β-catenin nuclear staining is positive.", correctAnswer:4, explanation:"Solid pseudopapillary neoplasm — classically affects young women; pseudopapillae and aberrant nuclear β-catenin are characteristic. Generally low-grade malignant; usually curable by resection."},
+      {vignette:"A 65-year-old man is investigated for episodes of confusion and diaphoresis that occur fasting and resolve with food. Imaging shows a 1.5 cm hyper-enhancing mass in the pancreatic tail. Fasting insulin and C-peptide are both inappropriately raised.", correctAnswer:3, explanation:"Insulinoma — most common functional pancreatic neuroendocrine tumour. Whipple's triad: symptoms of hypoglycaemia, low blood glucose, relief with glucose. Hyper-enhancing on arterial-phase CT; usually small and benign."},
+      {vignette:"A 70-year-old man with a long alcohol history has chronic epigastric pain, steatorrhoea and diabetes. CT shows pancreatic ductal dilation with intraductal calcifications and a focal mass in the head.", correctAnswer:7, explanation:"Chronic pancreatitis with obstructing stone — calcifications, ductal dilation, and steatorrhoea/diabetes (loss of exocrine and endocrine function) point to chronic pancreatitis. A focal inflammatory mass can mimic carcinoma; biopsy is often needed to exclude malignancy."},
+      {vignette:"A 56-year-old man has cholestatic jaundice, weight loss and a hard 4 cm mass in the head of the pancreas with a double duct sign on CT and elevated CA 19-9.", correctAnswer:0, explanation:"Pancreatic ductal adenocarcinoma — the classic clinical–imaging picture used in this case (DH)."},
+      {vignette:"A 60-year-old man with a known history of HIV has constitutional symptoms and CT shows a homogeneous, bulky pancreatic mass with associated lymphadenopathy and minimal ductal dilation despite the size.", correctAnswer:6, explanation:"Pancreatic lymphoma — bulky, homogeneous, associated lymphadenopathy and surprisingly little ductal obstruction for size are characteristic. Treatment is chemotherapy, NOT surgery — which makes the distinction crucial."}
+    ],
+    sourceCitation:"Slide 68 — Differential causes of a pancreatic mass."
+  },
+  {
+    id:"q17", session:"Case 6 — Upper GI / Pancreas 1",
+    topic:"Pancreatic histology", bloomsLevel:"Analyse", type:"MCQ",
+    stem:"An H&E-stained section of normal pancreas at medium power shows densely packed lobules of basophilic cells with apical eosinophilic granules arranged in small acini, drained by intercalated ducts, with scattered pale-staining rounded clusters of cells embedded between the lobules. Which structures are these pale-staining clusters?",
+    options:["Brunner's glands","Islets of Langerhans","Pancreatic ductal epithelium with goblet cells","Lymphoid aggregates (MALT)","Adipocytes infiltrating the parenchyma"],
+    correctAnswer:1,
+    explanation:"Islets of Langerhans appear as pale, rounded clusters of cells scattered between the more deeply staining exocrine acini. They are the endocrine component of the pancreas and are well vascularised.",
+    clinicalCorrelation:"Selective destruction of β-cells within islets is the basis of Type 1 diabetes mellitus. Islet-cell hyperplasia or neoplasia underlies pancreatic neuroendocrine tumours.",
+    sourceCitation:"Slides 27–30 — Pancreatic histology (acini and islets). [Image placeholder — descriptive caption used in lieu of slide image.]"
+  },
+  {
+    id:"q18", session:"Case 6 — Upper GI / Pancreas 1",
+    topic:"Pancreatic histology — adenocarcinoma", bloomsLevel:"Analyse", type:"MCQ",
+    stem:"An H&E section from DH's pancreatic resection specimen shows irregular, infiltrative glands lined by atypical cuboidal-to-columnar epithelium, with single glands invading a desmoplastic stromal reaction and tracking alongside small nerves. Which two histological features are most specific for pancreatic ductal adenocarcinoma in this image?",
+    options:["Goblet cells and Paneth cells","Desmoplastic stroma and perineural invasion","Granuloma formation and giant cells","Lymphoid follicles and germinal centres","Cellular atypia and mucin secretion only"],
+    correctAnswer:1,
+    explanation:"Pancreatic ductal adenocarcinoma is characterised by infiltrative haphazard glands set in a dense desmoplastic (fibrotic) stroma, with prominent perineural and often lymphovascular invasion. The desmoplasia accounts for the firm, scirrhous gross texture.",
+    clinicalCorrelation:"Perineural invasion contributes to the back pain seen in advanced disease (tumour tracks along splanchnic nerves into the retroperitoneum) and partly explains why R0 resection is so difficult to achieve.",
+    sourceCitation:"Slides 34, 57–61, 65 — Pancreatic ductal adenocarcinoma histology, PNI/LVI noted in diagnosis."
+  },
+  {
+    id:"q19", session:"Case 6 — Upper GI / Pancreas 1",
+    topic:"Pancreas — anatomy", bloomsLevel:"Remember", type:"ImageLabel",
+    stem:"Identify the labelled regions of the pancreas. Click each numbered hotspot, then choose the correct anatomical part.",
+    imageType:"pancreas",
+    hotspots:[
+      {id:1, label:"Head", options:["Head","Neck","Body","Tail","Uncinate process"]},
+      {id:2, label:"Uncinate process", options:["Head","Neck","Body","Tail","Uncinate process"]},
+      {id:3, label:"Neck", options:["Head","Neck","Body","Tail","Uncinate process"]},
+      {id:4, label:"Body", options:["Head","Neck","Body","Tail","Uncinate process"]},
+      {id:5, label:"Tail", options:["Head","Neck","Body","Tail","Uncinate process"]}
+    ],
+    explanation:"From right to left: head (sits in the C-loop of duodenum) → uncinate process (hooks behind SMA/SMV) → neck (overlies SMV/portal vein confluence; landmark for transection in distal pancreatectomy) → body (anterior to splenic vein and L1 vertebra) → tail (extends into the splenorenal ligament toward the splenic hilum).",
+    clinicalCorrelation:"About 60–70% of pancreatic adenocarcinomas arise in the head — accounting for the typical presentation with painless obstructive jaundice (compressing the intrapancreatic CBD).",
+    sourceCitation:"Slide 47 & 50 — Pancreas anatomy. [SVG placeholder diagram.]"
+  },
+  {
+    id:"q20", session:"Case 6 — Upper GI / Pancreas 1",
+    topic:"CT abdomen — anatomy", bloomsLevel:"Apply", type:"ImageLabel",
+    stem:"On a normal axial contrast-enhanced CT abdomen at the level of the upper abdomen, identify each labelled structure.",
+    imageType:"ct",
+    hotspots:[
+      {id:1, label:"Liver", options:["Liver","Stomach","Spleen","Pancreas","Aorta","Inferior vena cava","Right kidney"]},
+      {id:2, label:"Stomach", options:["Liver","Stomach","Spleen","Pancreas","Aorta","Inferior vena cava","Right kidney"]},
+      {id:3, label:"Pancreas", options:["Liver","Stomach","Spleen","Pancreas","Aorta","Inferior vena cava","Right kidney"]},
+      {id:4, label:"Spleen", options:["Liver","Stomach","Spleen","Pancreas","Aorta","Inferior vena cava","Right kidney"]},
+      {id:5, label:"Aorta", options:["Liver","Stomach","Spleen","Pancreas","Aorta","Inferior vena cava","Right kidney"]},
+      {id:6, label:"Inferior vena cava", options:["Liver","Stomach","Spleen","Pancreas","Aorta","Inferior vena cava","Right kidney"]}
+    ],
+    explanation:"On axial CT at the upper abdomen: the LIVER occupies the right anterior segment, the STOMACH lies anterior and to the left (often air-filled), the PANCREAS crosses the midline anterior to the great vessels, the SPLEEN sits posterolaterally on the left, the AORTA is a circular contrast-filled structure to the left of midline, and the IVC sits to its right.",
+    clinicalCorrelation:"Recognising relative positions on axial CT is essential for reading reports, planning biopsies, and understanding why pancreatic tumours so easily involve the SMA/SMV/portal vein and become unresectable.",
+    sourceCitation:"Slides 20–22 — CT abdomen normal & with pancreatic mass. [SVG schematic placeholder.]"
+  },
+  {
+    id:"q21", session:"Case 6 — Upper GI / Pancreas 1",
+    topic:"Lymphatic drainage", bloomsLevel:"Apply", type:"MCQ",
+    stem:"Lymph from the head of the pancreas drains primarily to which group of lymph nodes (most direct first echelon)?",
+    options:["Pancreaticosplenic nodes","Coeliac nodes only","Pyloric and superior mesenteric nodes","Inguinal nodes","Para-aortic nodes directly"],
+    correctAnswer:2,
+    explanation:"Lymph from the pancreatic head drains primarily to pyloric and superior mesenteric nodes, ultimately reaching coeliac and superior mesenteric nodal groups. The body and tail drain mainly to pancreaticosplenic nodes.",
+    clinicalCorrelation:"The wide and overlapping pattern of lymphatic drainage explains the high rate of nodal positivity at diagnosis (DH had 13/32 nodes positive).",
+    sourceCitation:"Slide 51 — Pancreatic lymph drainage."
+  },
+  {
+    id:"q22", session:"Case 6 — Upper GI / Pancreas 1",
+    topic:"Pancreatitis vs adenocarcinoma — biochemistry", bloomsLevel:"Analyse", type:"MCQ",
+    stem:"Which combination of serum findings would most strongly favour acute pancreatitis OVER pancreatic adenocarcinoma in a patient with epigastric pain?",
+    options:["Lipase 5× upper limit of normal, normal CA 19-9, normal bilirubin","Mildly elevated lipase, markedly elevated CA 19-9, raised conjugated bilirubin","Normal lipase and amylase, markedly raised CA 19-9","Normal lipase, raised GGT, raised CA 19-9 and CEA","Raised LDH and CA 19-9 with normal lipase"],
+    correctAnswer:0,
+    explanation:"A markedly elevated lipase (≥3× upper limit of normal) in the right clinical context is a key diagnostic criterion for acute pancreatitis (Atlanta criteria), and normal CA 19-9 / bilirubin argue against an obstructing malignancy. Lipase is more specific for pancreatitis than amylase. The other options describe biliary obstruction with possible malignancy.",
+    clinicalCorrelation:"Lipase can also rise (less dramatically) with any pancreatic insult — including obstruction by a tumour — so context (history, imaging) is crucial.",
+    sourceCitation:"Slide 15 — Bloods."
+  },
+  {
+    id:"q23", session:"Case 6 — Upper GI / Pancreas 1",
+    topic:"Pancreas — anatomy", bloomsLevel:"Remember", type:"ShortAnswer",
+    stem:"What is the eponymous name of the dilated common channel formed by the union of the main pancreatic duct (Wirsung) and common bile duct, opening into the second part of the duodenum?",
+    blanks:1, correctAnswer:["ampulla of vater"],
+    acceptableVariants:[["ampulla of vater","hepatopancreatic ampulla","ampulla of Vater","vater"]],
+    explanation:"The ampulla of Vater (hepatopancreatic ampulla) is the short common channel of the bile duct and main pancreatic duct, surrounded by the sphincter of Oddi, opening at the major duodenal papilla in D2.",
+    clinicalCorrelation:"Ampullary carcinoma is a separate entity that may also present with painless obstructive jaundice and double duct sign; survival is generally better than pancreatic adenocarcinoma.",
+    sourceCitation:"Slides 47–49 — Pancreatic ductal anatomy & ERCP."
+  },
+  {
+    id:"q24", session:"Case 6 — Upper GI / Pancreas 1",
+    topic:"Stigmata of chronic liver disease", bloomsLevel:"Remember", type:"MCQ",
+    stem:"DH's examination notes 'palmar erythema'. Palmar erythema is best understood as a sign of:",
+    options:["Acute right heart failure","Chronic liver disease (altered oestrogen metabolism)","Iron-deficiency anaemia","Hyperthyroidism only","A normal variant of no significance"],
+    correctAnswer:1,
+    explanation:"Palmar erythema is most commonly associated with chronic liver disease, secondary to impaired oestrogen metabolism by the failing liver. Other causes include pregnancy, hyperthyroidism, rheumatoid arthritis and idiopathic.",
+    clinicalCorrelation:"In DH, palmar erythema sits alongside ascites, hepatomegaly and an umbilical hernia — together pointing to underlying chronic liver disease in addition to his pancreatic pathology, which has implications for operability and chemotherapy tolerance.",
+    sourceCitation:"Slide 11 — Examination findings."
+  },
+  {
+    id:"q25", session:"Case 6 — Upper GI / Pancreas 1",
+    topic:"Anterior abdominal wall — surface anatomy", bloomsLevel:"Remember", type:"ShortAnswer",
+    stem:"What is the surface marking of the fundus of the gallbladder, used during clinical examination?",
+    blanks:1, correctAnswer:["tip of the right 9th costal cartilage at the lateral border of rectus abdominis"],
+    acceptableVariants:[["tip of the right 9th costal cartilage at the lateral border of rectus abdominis","tip of the 9th costal cartilage","right 9th costal cartilage","9th costal cartilage","intersection of right linea semilunaris and right costal margin","linea semilunaris and costal margin"]],
+    explanation:"The fundus of the gallbladder lies at the tip of the right 9th costal cartilage, where the lateral border of the right rectus abdominis (linea semilunaris) meets the costal margin. This is the point at which Murphy's sign is elicited.",
+    clinicalCorrelation:"Murphy's sign: deep palpation at this point during inspiration causes the patient to catch their breath if the gallbladder is inflamed (acute cholecystitis).",
+    sourceCitation:"Slide 8 — Surface landmarks."
+  },
+  {
+    id:"q26", session:"Case 6 — Upper GI / Pancreas 1",
+    topic:"Differential of epigastric pain", bloomsLevel:"Analyse", type:"EMQ",
+    stem:"Causes of epigastric pain — match each vignette to the diagnosis.",
+    emqOptions:["A. Acute pancreatitis","B. Pancreatic ductal adenocarcinoma","C. Perforated peptic ulcer","D. Acute cholecystitis","E. Ruptured abdominal aortic aneurysm","F. Inferior STEMI","G. Mesenteric ischaemia"],
+    emqStems:[
+      {vignette:"A 60-year-old smoker with hypertension presents with sudden, severe epigastric pain radiating to the back, hypotension and a pulsatile abdominal mass.", correctAnswer:4, explanation:"Ruptured AAA — the triad of pain, hypotension and a pulsatile mass is classic and time-critical. Pain radiating to the back can mimic pancreatic disease."},
+      {vignette:"A 56-year-old man with weeks of dull epigastric pain, painless jaundice, 8 kg weight loss and itchy skin; CT shows a head-of-pancreas mass with double duct sign.", correctAnswer:1, explanation:"Pancreatic ductal adenocarcinoma — the DH case. Painless cholestatic jaundice + weight loss + head-of-pancreas mass."},
+      {vignette:"A 45-year-old woman with sudden severe epigastric pain after a heavy meal, fever, RUQ tenderness with inspiratory arrest on palpation; raised WCC, CRP and LFTs with normal lipase.", correctAnswer:3, explanation:"Acute cholecystitis — Murphy's sign positive; lipase normal makes pancreatitis less likely."},
+      {vignette:"A 50-year-old man with a long alcohol history presents with sudden severe epigastric pain radiating to the back, vomiting, lipase 8× upper limit of normal, no jaundice.", correctAnswer:0, explanation:"Acute pancreatitis — alcohol is a top cause; lipase ≥3× ULN is diagnostic in this clinical setting (per the Atlanta criteria)."},
+      {vignette:"A 65-year-old diabetic smoker presents with epigastric heaviness, nausea, sweating and a vague sense of impending doom; ECG shows ST elevation in II, III and aVF.", correctAnswer:5, explanation:"Inferior STEMI — diaphragmatic irritation from inferior MI can present as 'epigastric' pain. Always consider cardiac causes of upper-abdominal pain in older / vasculopath patients."}
+    ],
+    sourceCitation:"LO 4 — Compare and contrast presentations of epigastric pain (Slide 2). DH case features (slides 4–6)."
+  },
+  {
+    id:"q27", session:"Case 6 — Upper GI / Pancreas 1",
+    topic:"Pancreas — anatomy", bloomsLevel:"Understand", type:"MCQ",
+    stem:"Which statement about the peritoneal relations of the pancreas is correct?",
+    options:["The entire pancreas is intraperitoneal and supported by a mesentery","The pancreas is retroperitoneal except for the tail, which lies within the splenorenal ligament","The head of the pancreas is intraperitoneal; the body and tail are retroperitoneal","The pancreas is entirely intraperitoneal but lacks a mesentery","The pancreas is suspended in the lesser omentum"],
+    correctAnswer:1,
+    explanation:"The pancreas is a secondarily retroperitoneal organ. The tail is the exception: it lies within the two layers of the splenorenal (lienorenal) ligament and is therefore intraperitoneal and mobile.",
+    clinicalCorrelation:"Retroperitoneal location explains why pancreatic pain often radiates to the back, and why pancreatic inflammation can cause Grey-Turner's (flank) and Cullen's (periumbilical) signs through retroperitoneal blood tracking.",
+    sourceCitation:"Slide 50 — Pancreas posterior relationships; embryology slide 48."
+  },
+  {
+    id:"q28", session:"Case 6 — Upper GI / Pancreas 1",
+    topic:"Bile / liver biochemistry", bloomsLevel:"Understand", type:"MCQ",
+    stem:"DH's intensely itchy skin, scleral icterus and dark urine suggest cholestasis. Which biochemical change would you expect to be MOST prominent in obstructive jaundice?",
+    options:["Markedly raised unconjugated bilirubin only","Raised conjugated bilirubin with raised ALP and GGT","Markedly raised AST/ALT with normal ALP","Reduced total bilirubin with raised reticulocytes","Isolated rise in lipase"],
+    correctAnswer:1,
+    explanation:"Obstructive (post-hepatic) jaundice typically shows a CONJUGATED hyperbilirubinaemia with disproportionately raised ALP and GGT (cholestatic enzymes). DH's bloods showed a raised GGT, fitting this picture. Hepatocellular injury would show a transaminitis (AST/ALT > ALP); haemolysis would show unconjugated hyperbilirubinaemia with reticulocytosis.",
+    clinicalCorrelation:"Conjugated bilirubin is water-soluble and excreted in urine (dark urine); absence of bile reaching the gut causes pale stools and steatorrhoea.",
+    sourceCitation:"Slides 6, 15 — Symptoms & LFT pattern."
+  },
+  {
+    id:"q29", session:"Case 6 — Upper GI / Pancreas 1",
+    topic:"Treatment of pancreatic adenocarcinoma", bloomsLevel:"Evaluate", type:"MCQ",
+    stem:"A 62-year-old patient is diagnosed with a 2.5 cm pancreatic head adenocarcinoma. Imaging shows no metastatic disease and no involvement of the SMA, coeliac axis, or SMV/PV. Performance status is good. What is the most appropriate next step?",
+    options:["Palliative chemotherapy alone","Pancreaticoduodenectomy (Whipple's procedure) ± neoadjuvant therapy, then adjuvant chemotherapy","External-beam radiotherapy alone","Distal pancreatectomy and splenectomy","ERCP with stenting and observation"],
+    correctAnswer:1,
+    explanation:"A resectable pancreatic head adenocarcinoma in a fit patient should be considered for pancreaticoduodenectomy (Whipple's procedure), increasingly preceded by neoadjuvant chemotherapy in many centres, followed by adjuvant chemotherapy (e.g. modified FOLFIRINOX). This combined approach offers the only realistic chance of long-term survival.",
+    clinicalCorrelation:"Resectability is defined by relationship to major vessels (SMA, coeliac axis, SMV/PV). Unfortunately only ~15–20% of patients are resectable at presentation, contributing to the dismal overall 5-year survival of ~7%.",
+    sourceCitation:"Slides 65–67 — Possible treatments & outcomes."
+  },
+  {
+    id:"q30", session:"Case 6 — Upper GI / Pancreas 1",
+    topic:"Anterior abdominal wall — clinical anatomy", bloomsLevel:"Apply", type:"MCQ",
+    stem:"DH has an umbilical hernia containing metastatic carcinoma. The umbilical region of the abdominal wall corresponds to which dermatome?",
+    options:["T4","T7","T10","L1","L4"], correctAnswer:2,
+    explanation:"The umbilicus lies in the T10 dermatome. (T4 = nipple line; T7 = xiphoid; L1 = inguinal/groin region.)",
+    clinicalCorrelation:"Knowing dermatomal levels helps localise lesions of the spinal cord/nerve roots and predict the pattern of referred visceral pain (e.g. midgut visceral pain referred to the periumbilical T10 region in early appendicitis).",
+    sourceCitation:"Slide 8 — Dermatomes T4, T7, T10, L1."
+  }
+];
+
+/* ================================================================ *
+ *  STATE & HELPERS                                                  *
+ * ================================================================ */
+const BLOOM = {
+  Remember:"bg-emerald-100 text-emerald-800 border-emerald-200",
+  Understand:"bg-teal-100 text-teal-800 border-teal-200",
+  Apply:"bg-amber-100 text-amber-800 border-amber-200",
+  Analyse:"bg-orange-100 text-orange-800 border-orange-200",
+  Evaluate:"bg-rose-100 text-rose-800 border-rose-200"
+};
+const TYPE_LABEL = {MCQ:"Single best answer", EMQ:"Extended matching", ShortAnswer:"Short answer", ImageLabel:"Image labelling"};
+const TYPE_CHIP = {
+  MCQ:"bg-slate-100 text-slate-700 border-slate-200",
+  EMQ:"bg-indigo-50 text-indigo-700 border-indigo-200",
+  ShortAnswer:"bg-violet-50 text-violet-700 border-violet-200",
+  ImageLabel:"bg-sky-50 text-sky-700 border-sky-200"
+};
+
+let state = {
+  view: "home",
+  config: { count: 15, bloomsFilter: "all", typeFilter: "all", timed: false },
+  pool: [], idx: 0, responses: {}, reviewMode: false,
+  // per-question
+  qState: {}
+};
+
+function shuffle(a){ a=[...a]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+function esc(s){ return String(s).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function norm(t){ return (t||"").toString().trim().toLowerCase().replace(/[.,;:!?()]/g,"").replace(/\s+/g," "); }
+
+function getFilteredPool(){
+  let p = QUESTIONS.slice();
+  if(state.config.bloomsFilter !== "all") p = p.filter(q => q.bloomsLevel === state.config.bloomsFilter);
+  if(state.config.typeFilter !== "all") p = p.filter(q => q.type === state.config.typeFilter);
+  return p;
+}
+
+function startQuiz(){
+  let pool = shuffle(getFilteredPool()).slice(0, state.config.count);
+  state.pool = pool;
+  state.idx = 0;
+  state.responses = {};
+  state.qState = {};
+  state.reviewMode = false;
+  state.view = "quiz";
+  initQuestion();
+  render();
+}
+
+function reviewIncorrect(){
+  const wrongIds = Object.entries(state.responses).filter(([_,r]) => !r.correct).map(([id]) => id);
+  state.pool = shuffle(QUESTIONS.filter(q => wrongIds.includes(q.id)));
+  state.idx = 0; state.responses = {}; state.qState = {};
+  state.reviewMode = true; state.view = "quiz";
+  initQuestion(); render();
+}
+
+function initQuestion(){
+  const q = state.pool[state.idx];
+  if(!q) return;
+  const s = { submitted: false, started: Date.now() };
+  if(q.type === "MCQ"){
+    s.shuffled = shuffle(q.options.map((text, originalIdx) => ({text, originalIdx})));
+    s.userAnswer = null;
+  } else if(q.type === "EMQ"){
+    s.emqAnswers = {};
+  } else if(q.type === "ShortAnswer"){
+    s.shortAnswers = Array(q.blanks).fill("");
+  } else if(q.type === "ImageLabel"){
+    s.hotspotAnswers = {};
+    s.activeHotspot = null;
+  }
+  state.qState = s;
+}
+
+function submitCurrent(){
+  const q = state.pool[state.idx]; const s = state.qState;
+  let correct = false, user = null, partial = null;
+  if(q.type === "MCQ"){
+    if(s.userAnswer === null) return;
+    correct = s.userAnswer === q.correctAnswer;
+    user = s.userAnswer;
+  } else if(q.type === "EMQ"){
+    if(q.emqStems.some((_,i) => s.emqAnswers[i] === undefined)) return;
+    const cnt = q.emqStems.filter((st,i) => s.emqAnswers[i] === st.correctAnswer).length;
+    correct = cnt === q.emqStems.length;
+    partial = cnt;
+    user = {...s.emqAnswers};
+  } else if(q.type === "ShortAnswer"){
+    if(s.shortAnswers.some(a => !a.trim())) return;
+    const variants = q.acceptableVariants || q.correctAnswer.map(c => [c]);
+    correct = variants.every((acc, i) => {
+      const u = norm(s.shortAnswers[i]);
+      return acc.some(v => { const nv = norm(v); return nv === u || nv.includes(u) || u.includes(nv); });
+    });
+    user = [...s.shortAnswers];
+  } else if(q.type === "ImageLabel"){
+    if(Object.keys(s.hotspotAnswers).length < q.hotspots.length) return;
+    correct = q.hotspots.every(h => s.hotspotAnswers[h.id] === h.label);
+    user = {...s.hotspotAnswers};
+  }
+  state.responses[q.id] = { correct, user, partial };
+  s.submitted = true;
+  render();
+}
+
+function nextQuestion(){
+  if(state.idx + 1 >= state.pool.length){
+    state.view = "results";
+  } else {
+    state.idx++;
+    initQuestion();
+  }
+  render();
+}
+
+function prevQuestion(){
+  if(state.idx > 0){
+    state.idx--;
+    initQuestion();
+    // restore prior response if exists
+    const q = state.pool[state.idx]; const r = state.responses[q.id];
+    if(r){
+      state.qState.submitted = true;
+      if(q.type === "MCQ") state.qState.userAnswer = r.user;
+      else if(q.type === "EMQ") state.qState.emqAnswers = {...r.user};
+      else if(q.type === "ShortAnswer") state.qState.shortAnswers = [...r.user];
+      else if(q.type === "ImageLabel") state.qState.hotspotAnswers = {...r.user};
+    }
+    render();
+  }
+}
+
+/* ================================================================ *
+ *  RENDER FUNCTIONS                                                 *
+ * ================================================================ */
+
+function render(){
+  const root = document.getElementById("app");
+  if(state.view === "home") root.innerHTML = renderHome();
+  else if(state.view === "quiz") root.innerHTML = renderQuiz();
+  else if(state.view === "results") root.innerHTML = renderResults();
+  attachHandlers();
+}
+
+/* ---------- HOME ---------- */
+function renderHome(){
+  const totalQs = QUESTIONS.length;
+  const topics = Array.from(new Set(QUESTIONS.map(q => q.topic)));
+  const filteredCount = getFilteredPool().length;
+  const cnt = Math.min(state.config.count, filteredCount || 5);
+
+  return `
+  <div class="min-h-screen bg-gradient-to-br from-stone-50 via-amber-50/30 to-rose-50/30">
+    <div class="max-w-3xl mx-auto px-5 sm:px-6 py-10 sm:py-14">
+      <header class="mb-10">
+        <div class="flex items-center gap-3 mb-2">
+          <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-rose-700 to-rose-900 grid place-items-center text-white text-xl">⚕</div>
+          <div>
+            <h1 class="text-2xl sm:text-3xl font-serif font-semibold tracking-tight">MD2 Anatomical Pathology</h1>
+            <p class="text-sm text-stone-500">Self-paced quiz · Macquarie University</p>
+          </div>
+        </div>
+      </header>
+
+      <section class="mb-8">
+        <div class="bg-white rounded-2xl border border-stone-200 p-6">
+          <h2 class="text-xs uppercase tracking-widest font-semibold text-stone-500 mb-4">Available session</h2>
+          <div class="border-2 border-rose-700 rounded-xl p-5 bg-rose-50/30">
+            <h3 class="font-serif text-lg mb-1">Case 6 — Upper GI / Pancreas 1</h3>
+            <p class="text-sm text-stone-500 mb-3">${totalQs} questions · ${topics.length} topics</p>
+            <div class="flex flex-wrap gap-1.5">
+              ${topics.slice(0,6).map(t => `<span class="text-xs px-2 py-0.5 rounded-full bg-stone-100 text-stone-600">${esc(t)}</span>`).join("")}
+              ${topics.length > 6 ? `<span class="text-xs px-2 py-0.5 text-stone-500">+${topics.length-6} more</span>` : ""}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="mb-8 bg-white rounded-2xl border border-stone-200 p-6">
+        <h2 class="text-xs uppercase tracking-widest font-semibold text-stone-500 mb-5">Configure your session</h2>
+        <div class="grid sm:grid-cols-2 gap-5">
+          <div>
+            <label class="block text-sm font-medium text-stone-700 mb-2">Number of questions</label>
+            <div class="flex items-center gap-3">
+              <input id="cfgCount" type="range" min="5" max="${Math.max(filteredCount,5)}" value="${cnt}" class="flex-1">
+              <span id="cfgCountVal" class="text-sm font-mono w-10 text-right">${cnt}</span>
+            </div>
+            <p class="text-xs text-stone-500 mt-1">${filteredCount} available with current filters</p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-stone-700 mb-2">Bloom's level</label>
+            <select id="cfgBloom" class="w-full border border-stone-300 rounded-lg px-3 py-2 text-sm bg-white">
+              ${["all","Remember","Understand","Apply","Analyse","Evaluate"].map(v =>
+                `<option value="${v}" ${state.config.bloomsFilter===v?"selected":""}>${v==="all"?"All levels":v}</option>`).join("")}
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-stone-700 mb-2">Question type</label>
+            <select id="cfgType" class="w-full border border-stone-300 rounded-lg px-3 py-2 text-sm bg-white">
+              <option value="all" ${state.config.typeFilter==="all"?"selected":""}>All types</option>
+              <option value="MCQ" ${state.config.typeFilter==="MCQ"?"selected":""}>Single best answer (MCQ)</option>
+              <option value="EMQ" ${state.config.typeFilter==="EMQ"?"selected":""}>Extended matching (EMQ)</option>
+              <option value="ShortAnswer" ${state.config.typeFilter==="ShortAnswer"?"selected":""}>Short answer</option>
+              <option value="ImageLabel" ${state.config.typeFilter==="ImageLabel"?"selected":""}>Image labelling</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-stone-700 mb-2">Mode</label>
+            <div class="flex gap-2">
+              <button id="modeUntimed" class="flex-1 px-3 py-2 rounded-lg text-sm border ${!state.config.timed?'bg-stone-900 text-white border-stone-900':'bg-white text-stone-700 border-stone-300'}">Untimed</button>
+              <button id="modeTimed" class="flex-1 px-3 py-2 rounded-lg text-sm border ${state.config.timed?'bg-stone-900 text-white border-stone-900':'bg-white text-stone-700 border-stone-300'}">⏱ Timed</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <button id="startBtn" ${filteredCount===0?'disabled':''} class="w-full bg-rose-800 hover:bg-rose-900 disabled:bg-stone-300 text-white font-medium py-4 rounded-xl text-lg transition-colors">
+        Start quiz →
+      </button>
+
+      <footer class="mt-10 text-xs text-stone-400 text-center">
+        Source: MD2 Anatomy/Pathology — Upper GI Case 6 (Pancreas 1)<br>
+        Dr Mirjana Strkalj &amp; A/Prof John Turchini, Macquarie University
+      </footer>
+    </div>
+  </div>
+  `;
+}
+
+/* ---------- QUIZ ---------- */
+function renderQuiz(){
+  const q = state.pool[state.idx]; const s = state.qState;
+  const progress = ((state.idx + 1) / state.pool.length) * 100;
+  const bloomCls = BLOOM[q.bloomsLevel] || "";
+  const typeCls = TYPE_CHIP[q.type] || "";
+
+  let answerHTML = "";
+  if(q.type === "MCQ") answerHTML = renderMCQ(q, s);
+  else if(q.type === "EMQ") answerHTML = renderEMQ(q, s);
+  else if(q.type === "ShortAnswer") answerHTML = renderShort(q, s);
+  else if(q.type === "ImageLabel") answerHTML = renderImageLabel(q, s);
+
+  const feedback = s.submitted ? renderFeedback(q, state.responses[q.id]) : "";
+
+  return `
+  <div class="min-h-screen bg-stone-50 fade-in">
+    <header class="bg-white border-b border-stone-200 sticky top-0 z-10">
+      <div class="max-w-3xl mx-auto px-5 py-3 flex items-center justify-between">
+        <button id="homeBtn" class="text-stone-500 hover:text-stone-900 text-sm">⌂ Home</button>
+        <div class="text-sm font-medium">Question ${state.idx + 1} of ${state.pool.length}</div>
+        <div class="w-16 text-right text-xs text-stone-500">${state.reviewMode?"Review":""}</div>
+      </div>
+      <div class="h-1 bg-stone-100"><div class="h-full bg-rose-700 transition-all" style="width:${progress}%"></div></div>
+    </header>
+
+    <main class="max-w-3xl mx-auto px-5 sm:px-6 py-7">
+      <div class="flex flex-wrap items-center gap-2 mb-5">
+        <span class="text-xs px-2.5 py-1 rounded-full font-medium border ${bloomCls}">🧠 ${q.bloomsLevel}</span>
+        <span class="text-xs px-2.5 py-1 rounded-full border ${typeCls}">${TYPE_LABEL[q.type]}</span>
+        <span class="text-xs px-2.5 py-1 rounded-full bg-stone-100 text-stone-600 border border-stone-200">${esc(q.topic)}</span>
+        ${q.caseLabel ? `<span class="text-xs px-2.5 py-1 rounded-full bg-rose-50 text-rose-700 border border-rose-200">📋 ${esc(q.caseLabel)}</span>` : ""}
+      </div>
+
+      <div class="bg-white rounded-2xl border border-stone-200 p-6 mb-6">
+        <p class="font-serif text-lg leading-relaxed">${esc(q.stem)}</p>
+      </div>
+
+      ${answerHTML}
+
+      <div class="mt-6 flex items-center justify-between">
+        <button id="prevBtn" ${state.idx===0?"disabled":""} class="px-4 py-2 text-stone-600 hover:text-stone-900 disabled:text-stone-300">← Previous</button>
+        ${!s.submitted
+          ? `<button id="submitBtn" class="bg-rose-800 hover:bg-rose-900 text-white px-6 py-2.5 rounded-lg font-medium">Submit answer</button>`
+          : `<button id="nextBtn" class="bg-stone-900 hover:bg-black text-white px-6 py-2.5 rounded-lg font-medium">${state.idx + 1 >= state.pool.length ? "Finish →" : "Next →"}</button>`
+        }
+      </div>
+
+      ${feedback}
+    </main>
+  </div>
+  `;
+}
+
+function renderMCQ(q, s){
+  return `<div class="space-y-2">
+    ${s.shuffled.map((opt, i) => {
+      const letter = String.fromCharCode(65 + i);
+      const isSelected = s.userAnswer === opt.originalIdx;
+      const isCorrect = opt.originalIdx === q.correctAnswer;
+      let cls = "border-stone-200 bg-white hover:border-stone-400";
+      if(s.submitted){
+        if(isCorrect) cls = "border-emerald-500 bg-emerald-50";
+        else if(isSelected) cls = "border-rose-500 bg-rose-50";
+        else cls = "border-stone-200 bg-white opacity-60";
+      } else if(isSelected){
+        cls = "border-stone-900 bg-stone-50";
+      }
+      const mark = s.submitted ? (isCorrect ? `<span class="text-emerald-700 font-bold">✓</span>` : (isSelected ? `<span class="text-rose-700 font-bold">✗</span>` : "")) : "";
+      return `<button data-mcq="${opt.originalIdx}" ${s.submitted?"disabled":""} class="w-full text-left p-4 rounded-xl border-2 transition-all flex items-start gap-3 ${cls}">
+        <span class="font-mono text-sm font-semibold text-stone-500 mt-0.5">${letter}</span>
+        <span class="flex-1 text-sm sm:text-base leading-relaxed">${esc(opt.text)}</span>
+        ${mark}
+      </button>`;
+    }).join("")}
+  </div>`;
+}
+
+function renderEMQ(q, s){
+  return `<div class="space-y-5">
+    <div class="bg-indigo-50/50 border border-indigo-200 rounded-xl p-4">
+      <h4 class="text-xs font-semibold uppercase tracking-wider text-indigo-700 mb-2">Option list</h4>
+      <div class="grid sm:grid-cols-2 gap-1.5 text-sm text-indigo-900">
+        ${q.emqOptions.map(o => `<div>${esc(o)}</div>`).join("")}
+      </div>
+    </div>
+    ${q.emqStems.map((st, idx) => {
+      const userPick = s.emqAnswers[idx];
+      const correct = st.correctAnswer;
+      let borderCls = "border-stone-300";
+      if(s.submitted) borderCls = userPick === correct ? "border-emerald-500" : "border-rose-500";
+      const fb = s.submitted ? `<div class="mt-2 text-xs ${userPick === correct ? 'text-emerald-700' : 'text-rose-700'}">
+        ${userPick === correct ? '✓' : '✗'} Correct: <strong>${esc(q.emqOptions[correct])}</strong>. ${esc(st.explanation)}
+      </div>` : "";
+      return `<div class="bg-white border border-stone-200 rounded-xl p-4">
+        <p class="text-sm leading-relaxed mb-3"><span class="font-semibold text-stone-500">Stem ${idx+1}.</span> ${esc(st.vignette)}</p>
+        <select data-emq="${idx}" ${s.submitted?"disabled":""} class="w-full border-2 rounded-lg px-3 py-2 text-sm bg-white ${borderCls}">
+          <option value="">— select an option —</option>
+          ${q.emqOptions.map((o,i) => `<option value="${i}" ${userPick===i?"selected":""}>${esc(o)}</option>`).join("")}
+        </select>
+        ${fb}
+      </div>`;
+    }).join("")}
+  </div>`;
+}
+
+function renderShort(q, s){
+  const inputs = Array.from({length: q.blanks}).map((_, i) => `
+    <div>
+      ${q.blanks > 1 ? `<label class="text-xs text-stone-500 mb-1 block">Answer ${i+1}</label>` : ""}
+      <input data-short="${i}" type="text" value="${esc(s.shortAnswers[i] || "")}" ${s.submitted?"disabled":""} placeholder="Type your answer…"
+        class="w-full border-2 rounded-lg px-4 py-3 font-mono text-sm bg-white ${s.submitted?'border-stone-300 bg-stone-50':'border-stone-300 focus:border-stone-900 focus:outline-none'}">
+    </div>
+  `).join("");
+  const accepted = s.submitted ? `<div class="text-xs text-stone-600 bg-stone-100 rounded-lg p-3"><strong>Acceptable answer${q.blanks>1?'s':''}:</strong> ${esc(q.correctAnswer.join(" · "))}</div>` : "";
+  return `<div class="space-y-3">${inputs}${accepted}</div>`;
+}
+
+function renderImageLabel(q, s){
+  const diagram = q.imageType === "pancreas" ? renderPancreasSVG(s) : renderCTSVG(s);
+  const hotspotPicks = q.hotspots.map(h => {
+    const ans = s.hotspotAnswers[h.id];
+    const isCorrect = ans === h.label;
+    let cls = "border-stone-200 bg-white hover:border-stone-400";
+    let mark = "";
+    if(s.submitted){
+      cls = isCorrect ? "border-emerald-500 bg-emerald-50" : "border-rose-500 bg-rose-50";
+      mark = isCorrect ? `<span class="text-emerald-700 ml-auto">✓</span>` : `<span class="ml-auto text-xs text-rose-700">→ ${esc(h.label)}</span>`;
+    } else if(s.activeHotspot === h.id){
+      cls = "border-stone-900 bg-stone-50";
+    }
+    return `<div data-hotspot="${h.id}" class="p-3 rounded-lg border-2 cursor-pointer text-sm ${cls}">
+      <div class="flex items-center gap-2">
+        <span class="w-6 h-6 rounded-full bg-stone-700 text-white text-xs grid place-items-center font-bold">${h.id}</span>
+        <span class="${ans?'':'text-stone-400 italic'}">${esc(ans || 'click to select')}</span>
+        ${mark}
+      </div>
+    </div>`;
+  }).join("");
+
+  const allOpts = q.hotspots[0]?.options || [];
+  const picker = (!s.submitted && s.activeHotspot !== null) ? `
+    <div class="bg-stone-100 rounded-lg p-3">
+      <p class="text-xs text-stone-600 mb-2">Assign hotspot <strong>#${s.activeHotspot}</strong> to:</p>
+      <div class="flex flex-wrap gap-2">
+        ${allOpts.map(o => `<button data-pick="${esc(o)}" class="text-xs px-3 py-1.5 bg-white border border-stone-300 rounded-full hover:border-stone-900">${esc(o)}</button>`).join("")}
+      </div>
+    </div>` : "";
+
+  return `<div class="space-y-4">${diagram}<div class="grid sm:grid-cols-2 gap-3">${hotspotPicks}</div>${picker}</div>`;
+}
+
+function renderPancreasSVG(s){
+  const pts = [
+    {id:1, cx:95, cy:110}, {id:2, cx:120, cy:150}, {id:3, cx:165, cy:100},
+    {id:4, cx:240, cy:90}, {id:5, cx:340, cy:75}
+  ];
+  return `<div class="bg-stone-50 border border-stone-200 rounded-lg p-3">
+    <p class="text-xs text-stone-500 italic mb-2">[SVG placeholder — replace with slide 47 (Pancreas) image when available]</p>
+    <svg viewBox="0 0 400 220" class="w-full h-auto" role="img" aria-label="Pancreas diagram">
+      <path d="M 70 60 Q 50 110 80 170 Q 120 200 160 170 Q 175 140 150 120" fill="none" stroke="#a8a29e" stroke-width="14" stroke-linecap="round"/>
+      <path d="M 95 110 Q 130 130 170 105 Q 240 90 340 75 Q 360 70 365 80 Q 360 95 340 90 Q 240 105 170 120 Q 130 145 110 140 Z" fill="#fde68a" stroke="#a16207" stroke-width="1.5"/>
+      <path d="M 100 130 Q 115 155 140 160 Q 145 145 130 135 Z" fill="#fde68a" stroke="#a16207" stroke-width="1.5"/>
+      <ellipse cx="380" cy="75" rx="14" ry="22" fill="#a78bfa" stroke="#5b21b6"/>
+      <text x="380" y="115" font-size="9" text-anchor="middle" fill="#5b21b6">spleen</text>
+      <text x="65" y="195" font-size="9" fill="#57534e">duodenum</text>
+      ${pts.map(p => `<g data-svghotspot="${p.id}" class="hot-circle">
+        <circle cx="${p.cx}" cy="${p.cy}" r="11" fill="${s.activeHotspot===p.id?'#1e293b':'#475569'}" stroke="white" stroke-width="2"/>
+        <text x="${p.cx}" y="${p.cy+4}" font-size="11" text-anchor="middle" fill="white" font-weight="bold" pointer-events="none">${p.id}</text>
+      </g>`).join("")}
+    </svg>
+  </div>`;
+}
+
+function renderCTSVG(s){
+  const pts = [
+    {id:1,cx:110,cy:130},{id:2,cx:200,cy:100},{id:3,cx:200,cy:160},
+    {id:4,cx:290,cy:150},{id:5,cx:215,cy:200},{id:6,cx:180,cy:200}
+  ];
+  return `<div class="bg-black border border-stone-700 rounded-lg p-3">
+    <p class="text-xs text-stone-300 italic mb-2">[SVG schematic — replace with slide 20 axial CT when available]</p>
+    <svg viewBox="0 0 400 270" class="w-full h-auto" role="img" aria-label="CT axial schematic">
+      <ellipse cx="200" cy="135" rx="180" ry="125" fill="#27272a" stroke="#71717a" stroke-width="2"/>
+      <path d="M 30 90 Q 60 50 180 70 Q 195 130 165 175 Q 90 180 35 160 Z" fill="#52525b" stroke="#a1a1aa"/>
+      <ellipse cx="220" cy="95" rx="35" ry="22" fill="#18181b" stroke="#a1a1aa" stroke-width="1.5"/>
+      <path d="M 130 170 Q 200 145 290 170 Q 295 178 285 180 Q 200 158 130 180 Z" fill="#71717a" stroke="#d4d4d8"/>
+      <ellipse cx="320" cy="140" rx="35" ry="40" fill="#52525b" stroke="#a1a1aa"/>
+      <circle cx="215" cy="200" r="11" fill="#fafafa" stroke="#a1a1aa"/>
+      <ellipse cx="180" cy="200" rx="13" ry="9" fill="#a1a1aa" stroke="#d4d4d8"/>
+      <rect x="190" y="220" width="20" height="22" fill="#fafafa"/>
+      ${pts.map(p => `<g data-svghotspot="${p.id}" class="hot-circle">
+        <circle cx="${p.cx}" cy="${p.cy}" r="13" fill="${s.activeHotspot===p.id?'#dc2626':'#ef4444'}" stroke="white" stroke-width="2"/>
+        <text x="${p.cx}" y="${p.cy+4}" font-size="12" text-anchor="middle" fill="white" font-weight="bold" pointer-events="none">${p.id}</text>
+      </g>`).join("")}
+    </svg>
+  </div>`;
+}
+
+function renderFeedback(q, r){
+  if(!r) return "";
+  const c = r.correct;
+  const cls = c ? "border-emerald-300 bg-emerald-50" : "border-rose-300 bg-rose-50";
+  const headCls = c ? "text-emerald-900" : "text-rose-900";
+  const partial = (q.type === "EMQ" && r.partial !== null) ? ` <span class="font-normal text-sm">(${r.partial}/${q.emqStems.length} matched)</span>` : "";
+  const cc = q.clinicalCorrelation ? `
+    <div class="flex items-start gap-2 text-sm text-stone-700 mb-2 bg-white/60 rounded-lg p-3">
+      <span class="text-amber-600">💡</span>
+      <p><strong>Clinical correlation:</strong> ${esc(q.clinicalCorrelation)}</p>
+    </div>` : "";
+  return `<div class="mt-6 rounded-2xl border-2 p-5 ${cls} fade-in">
+    <h4 class="font-semibold ${headCls} mb-3">${c ? "✓ Correct" : "✗ Not quite"}${partial}</h4>
+    <p class="text-sm leading-relaxed mb-3">${esc(q.explanation)}</p>
+    ${cc}
+    <p class="text-xs text-stone-500 italic">${esc(q.sourceCitation)}</p>
+  </div>`;
+}
+
+/* ---------- RESULTS ---------- */
+function renderResults(){
+  const total = state.pool.length;
+  const correct = state.pool.filter(q => state.responses[q.id]?.correct).length;
+  const pct = total > 0 ? Math.round((correct / total) * 100) : 0;
+
+  // Bloom's
+  const bloomGroups = {};
+  state.pool.forEach(q => {
+    if(!bloomGroups[q.bloomsLevel]) bloomGroups[q.bloomsLevel] = {correct:0, total:0};
+    bloomGroups[q.bloomsLevel].total++;
+    if(state.responses[q.id]?.correct) bloomGroups[q.bloomsLevel].correct++;
+  });
+  const topicGroups = {};
+  state.pool.forEach(q => {
+    if(!topicGroups[q.topic]) topicGroups[q.topic] = {correct:0, total:0};
+    topicGroups[q.topic].total++;
+    if(state.responses[q.id]?.correct) topicGroups[q.topic].correct++;
+  });
+
+  const incorrect = state.pool.filter(q => !state.responses[q.id]?.correct);
+
+  const bloomBars = Object.entries(bloomGroups).map(([k,v]) => {
+    const w = v.total > 0 ? (v.correct / v.total) * 100 : 0;
+    return `<div class="flex items-center gap-3">
+      <div class="text-sm w-24"><span class="px-2 py-0.5 rounded-full text-xs border ${BLOOM[k]}">${k}</span></div>
+      <div class="flex-1 bg-stone-100 rounded-full h-3 overflow-hidden">
+        <div class="h-full bg-emerald-600" style="width:${w}%"></div>
+      </div>
+      <div class="text-xs font-mono text-stone-600 w-12 text-right">${v.correct}/${v.total}</div>
+    </div>`;
+  }).join("");
+
+  const topicBars = Object.entries(topicGroups).sort((a,b) => b[1].total - a[1].total).map(([k,v]) => {
+    const w = v.total > 0 ? (v.correct / v.total) * 100 : 0;
+    return `<div class="flex items-center gap-3">
+      <div class="text-sm w-1/2 truncate">${esc(k)}</div>
+      <div class="flex-1 bg-stone-100 rounded-full h-3 overflow-hidden">
+        <div class="h-full bg-emerald-600" style="width:${w}%"></div>
+      </div>
+      <div class="text-xs font-mono text-stone-600 w-12 text-right">${v.correct}/${v.total}</div>
+    </div>`;
+  }).join("");
+
+  const incorrectList = incorrect.length > 0 ? `
+    <div class="bg-white rounded-2xl border border-stone-200 p-6 mb-6">
+      <h3 class="text-xs uppercase tracking-widest font-semibold text-stone-500 mb-4">Questions to revisit (${incorrect.length})</h3>
+      <div class="space-y-3">
+        ${incorrect.map(q => `<div class="border-l-2 border-rose-400 pl-4 py-1">
+          <p class="text-sm font-medium mb-1">${esc(q.stem.length > 140 ? q.stem.slice(0,140)+'…' : q.stem)}</p>
+          <p class="text-xs text-stone-500">${esc(q.topic)} · ${esc(q.bloomsLevel)} · ${esc(q.sourceCitation)}</p>
+        </div>`).join("")}
+      </div>
+      <button id="reviewBtn" class="mt-5 w-full bg-stone-900 hover:bg-black text-white py-3 rounded-lg font-medium">↻ Review missed questions</button>
+    </div>` : `
+    <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-6 text-center mb-6">
+      <p class="text-emerald-900 font-medium">✓ All correct in this session — well done.</p>
+    </div>`;
+
+  return `
+  <div class="min-h-screen bg-stone-50 fade-in">
+    <div class="max-w-3xl mx-auto px-5 sm:px-6 py-10">
+      <header class="mb-8 flex items-center justify-between">
+        <h1 class="text-2xl font-serif font-semibold">${state.reviewMode ? "Review session — results" : "Session complete"}</h1>
+        <button id="homeBtn" class="text-sm text-stone-600 hover:text-stone-900">⌂ Home</button>
+      </header>
+
+      <div class="bg-white rounded-2xl border border-stone-200 p-8 mb-6 text-center">
+        <div class="text-5xl mb-2">🏆</div>
+        <p class="text-5xl font-serif font-semibold mb-1">${correct}/${total}</p>
+        <p class="text-stone-500">${pct}% correct</p>
+      </div>
+
+      <div class="bg-white rounded-2xl border border-stone-200 p-6 mb-6">
+        <h3 class="text-xs uppercase tracking-widest font-semibold text-stone-500 mb-4">By Bloom's level</h3>
+        <div class="space-y-2">${bloomBars}</div>
+      </div>
+
+      <div class="bg-white rounded-2xl border border-stone-200 p-6 mb-6">
+        <h3 class="text-xs uppercase tracking-widest font-semibold text-stone-500 mb-4">By topic</h3>
+        <div class="space-y-2">${topicBars}</div>
+      </div>
+
+      ${incorrectList}
+    </div>
+  </div>
+  `;
+}
+
+/* ================================================================ *
+ *  EVENT WIRING                                                     *
+ * ================================================================ */
+function attachHandlers(){
+  // Home
+  const cfgCount = document.getElementById("cfgCount");
+  if(cfgCount){
+    cfgCount.oninput = (e) => {
+      state.config.count = parseInt(e.target.value);
+      document.getElementById("cfgCountVal").textContent = state.config.count;
+    };
+  }
+  const cfgBloom = document.getElementById("cfgBloom");
+  if(cfgBloom) cfgBloom.onchange = (e) => { state.config.bloomsFilter = e.target.value; render(); };
+  const cfgType = document.getElementById("cfgType");
+  if(cfgType) cfgType.onchange = (e) => { state.config.typeFilter = e.target.value; render(); };
+  const mU = document.getElementById("modeUntimed");
+  if(mU) mU.onclick = () => { state.config.timed = false; render(); };
+  const mT = document.getElementById("modeTimed");
+  if(mT) mT.onclick = () => { state.config.timed = true; render(); };
+  const startBtn = document.getElementById("startBtn");
+  if(startBtn) startBtn.onclick = () => startQuiz();
+
+  // Quiz nav
+  const homeBtn = document.getElementById("homeBtn");
+  if(homeBtn) homeBtn.onclick = () => { state.view = "home"; render(); };
+  const submitBtn = document.getElementById("submitBtn");
+  if(submitBtn) submitBtn.onclick = () => submitCurrent();
+  const nextBtn = document.getElementById("nextBtn");
+  if(nextBtn) nextBtn.onclick = () => nextQuestion();
+  const prevBtn = document.getElementById("prevBtn");
+  if(prevBtn) prevBtn.onclick = () => prevQuestion();
+  const reviewBtn = document.getElementById("reviewBtn");
+  if(reviewBtn) reviewBtn.onclick = () => reviewIncorrect();
+
+  // MCQ
+  document.querySelectorAll("[data-mcq]").forEach(btn => {
+    btn.onclick = () => { state.qState.userAnswer = parseInt(btn.dataset.mcq); render(); };
+  });
+  // EMQ
+  document.querySelectorAll("[data-emq]").forEach(sel => {
+    sel.onchange = (e) => {
+      const idx = parseInt(sel.dataset.emq);
+      state.qState.emqAnswers[idx] = e.target.value === "" ? undefined : parseInt(e.target.value);
+    };
+  });
+  // Short answer
+  document.querySelectorAll("[data-short]").forEach(inp => {
+    inp.oninput = (e) => {
+      state.qState.shortAnswers[parseInt(inp.dataset.short)] = e.target.value;
+    };
+  });
+  // Image label hotspots
+  document.querySelectorAll("[data-hotspot]").forEach(el => {
+    el.onclick = () => { if(!state.qState.submitted){ state.qState.activeHotspot = parseInt(el.dataset.hotspot); render(); } };
+  });
+  document.querySelectorAll("[data-svghotspot]").forEach(el => {
+    el.onclick = () => { if(!state.qState.submitted){ state.qState.activeHotspot = parseInt(el.dataset.svghotspot); render(); } };
+  });
+  document.querySelectorAll("[data-pick]").forEach(btn => {
+    btn.onclick = () => {
+      if(state.qState.activeHotspot !== null){
+        state.qState.hotspotAnswers[state.qState.activeHotspot] = btn.dataset.pick;
+        state.qState.activeHotspot = null;
+        render();
+      }
+    };
+  });
+}
+
+// Boot
+render();
+</script>
+</body>
+</html>
